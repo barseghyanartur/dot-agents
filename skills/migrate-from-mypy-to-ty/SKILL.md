@@ -217,6 +217,25 @@ Inspect `.pre-commit-config.yaml` for any mypy hook:
       pass_filenames: false
 ```
 
+**Critical — extras and import resolution**: `uv run ty check` creates a fresh
+`.venv` containing only the project's base (non-optional) dependencies. ty uses
+that environment for import resolution. If any source files import packages that
+live in optional dependency groups (e.g. `pytest` in `test`, `ty` itself 
+in `lint`), ty will emit `unresolved-import` errors for those modules even 
+though they are installed elsewhere.
+
+Fix: pass `--extra <group>` for every optional group whose packages appear in
+source files that ty analyses:
+
+```yaml
+entry: uv run --extra lint --extra test ty check
+```
+
+Include every group whose imports appear in files scanned by ty — typically
+`test` (for `pytest`, test helpers) and `lint` (for `ty` itself if it is not a
+base dependency). The `--extra` flags cause uv to install those groups into the
+managed `.venv` before ty runs.
+
 Run `uv run pre-commit run --all-files` after updating the file.
 
 ---
