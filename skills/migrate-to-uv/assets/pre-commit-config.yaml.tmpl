@@ -1,0 +1,75 @@
+exclude: "{{ pre_commit_exclude }}"
+default_stages: [ pre-commit, pre-push ]
+default_language_version:
+  python: "{{ pre_commit_python }}"
+
+repos:
+
+  # BEGIN optional:doc8
+  # TEMPLATE: Keep only when the project has reStructuredText documentation.
+  - repo: https://github.com/PyCQA/doc8
+    rev: v2.0.0
+    hooks:
+      - id: doc8
+        args: []
+  # END optional:doc8
+
+  # BEGIN optional:detect-secrets
+  # TEMPLATE: Keep only when .secrets.baseline exists or the migration creates it.
+  - repo: https://github.com/Yelp/detect-secrets
+    rev: v1.5.0
+    hooks:
+      - id: detect-secrets
+        args: ['--baseline', '.secrets.baseline']
+  # END optional:detect-secrets
+
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v6.0.0
+    hooks:
+      - id: trailing-whitespace
+        exclude: "{{ trailing_whitespace_exclude }}"
+
+      - id: end-of-file-fixer
+      - id: check-yaml
+      - id: check-toml
+      - id: check-added-large-files
+        args: ['--maxkb={{ large_file_maxkb }}']
+      - id: debug-statements
+      - id: check-merge-conflict
+
+  - repo: https://github.com/charliermarsh/ruff-pre-commit
+    rev: v0.14.5
+    hooks:
+      - id: ruff-check
+        name: lint
+        files: .
+        args: [ "--config", "pyproject.toml", "--fix" ]
+      - id: ruff-format
+        name: format
+        files: .
+        args: [ "--config", "pyproject.toml" ]
+
+  # BEGIN optional:pydoclint
+  # TEMPLATE: Keep only when the project enforces docstring completeness.
+  - repo: https://github.com/jsh9/pydoclint
+    rev: 0.8.1
+    hooks:
+      - id: pydoclint
+  # END optional:pydoclint
+
+  # BEGIN optional:markdownlint
+  # TEMPLATE: Keep only when the project has Markdown documentation.
+  - repo: https://github.com/igorshubovych/markdownlint-cli
+    rev: v0.48.0
+    hooks:
+      - id: markdownlint
+  # END optional:markdownlint
+
+  # BEGIN optional:pyupgrade
+  # TEMPLATE: Keep only when automatic syntax upgrades are wanted.
+  - repo: https://github.com/asottile/pyupgrade
+    rev: v3.21.1
+    hooks:
+      - id: pyupgrade
+        args: [ "{{ pyupgrade_flag }}" ]
+  # END optional:pyupgrade

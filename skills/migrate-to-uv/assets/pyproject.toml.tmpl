@@ -1,0 +1,293 @@
+[project]
+name = "{{ project_name }}"
+description = "{{ project_description }}"
+readme = "{{ readme_file }}"
+version = "{{ version }}"
+requires-python = "{{ requires_python }}"
+dependencies = [
+    # TEMPLATE: Insert migrated runtime dependencies here.
+]
+authors = [
+    { name = "{{ author_name }}", email = "{{ author_email }}" },
+]
+maintainers = [
+    { name = "{{ maintainer_name }}", email = "{{ maintainer_email }}" },
+]
+license = "{{ license_expression }}"
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python",
+    # TEMPLATE: Keep only supported Python versions.
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+]
+keywords = [
+    # TEMPLATE: Insert package keywords here.
+]
+
+[project.scripts]
+# TEMPLATE: Add console scripts when present, for example:
+# {{ project_name }} = "{{ package_import_name }}.cli:main"
+
+[project.urls]
+Homepage = "{{ homepage_url }}"
+Repository = "{{ repository_url }}"
+Issues = "{{ issues_url }}"
+
+[project.optional-dependencies]
+# TEMPLATE: Keep only published, user-facing extras here.
+# example-extra = [
+#     "example-dependency>=1.0",
+# ]
+
+[dependency-groups]
+dev = [
+    "ipython",
+    "pre-commit",
+    "ruff",
+    "mypy",
+]
+test = [
+    "pytest",
+    "pytest-cov",
+    "pytest-codeblock",
+]
+docs = [
+    "doc8",
+    "sphinx",
+    "sphinx-autobuild",
+    "sphinx-rtd-theme>=1.3.0",
+    "sphinx-no-pragma",
+    "sphinx-markdown-builder",
+    "sphinx-llms-txt-link",
+    "sphinx-source-tree",
+]
+build = [
+    "build",
+    "twine",
+    "wheel",
+]
+security = [
+    "detect-secrets",
+]
+all = [
+    { include-group = "dev" },
+    { include-group = "test" },
+    { include-group = "docs" },
+    { include-group = "build" },
+    { include-group = "security" },
+]
+
+[tool.uv]
+default-groups = ["dev", "test"]
+package = true
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
+include = ["{{ package_import_name }}", "{{ package_import_name }}.*"]
+
+[tool.setuptools.package-data]
+"{{ package_import_name }}" = [
+    # TEMPLATE: Insert package data globs, for example:
+    # "data/**/*.json",
+]
+
+# TEMPLATE: For dynamic versioning, remove static `version` from [project],
+# add `dynamic = ["version"]`, and uncomment this section.
+# [tool.setuptools.dynamic]
+# version = {attr = "{{ package_import_name }}.__version__"}
+
+[build-system]
+requires = ["setuptools>=41.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[tool.ruff]
+line-length = 88
+fix = true
+src = ["src/{{ package_import_name }}"]
+target-version = "{{ ruff_target_version }}"
+exclude = [
+    ".bzr",
+    ".direnv",
+    ".eggs",
+    ".git",
+    ".hg",
+    ".mypy_cache",
+    ".nox",
+    ".pants.d",
+    ".ruff_cache",
+    ".svn",
+    ".tox",
+    ".venv",
+    "__pypackages__",
+    "_build",
+    "buck-out",
+    "build",
+    "dist",
+    "node_modules",
+    "venv",
+    "docs/_build",
+]
+
+[tool.ruff.lint]
+select = [
+    "B",
+    "C4",
+    "E",
+    "F",
+    "G",
+    "I",
+    "ISC",
+    "INP",
+    "N",
+    "PERF",
+    "Q",
+    "SIM",
+]
+ignore = [
+    "G004",
+    "ISC003",
+]
+dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
+
+[tool.ruff.lint.isort]
+known-first-party = ["{{ package_import_name }}"]
+
+[tool.ruff.lint.per-file-ignores]
+"conftest.py" = [
+    "PERF203",
+]
+
+[tool.doc8]
+ignore-path = [
+    "docs/requirements.txt",
+    "{{ package_egg_info_path }}/SOURCES.txt",
+]
+
+[tool.pytest.ini_options]
+addopts = [
+    "-ra",
+    "-q",
+    "--cov={{ package_import_name }}",
+    "--cov-report=html",
+    "--cov-report=term-missing",
+    "--capture=no",
+]
+testpaths = [
+    "tests",
+    "src/{{ package_import_name }}/tests",
+]
+pythonpath = ["src"]
+norecursedirs = [
+    ".git",
+    ".tox",
+    ".venv",
+    "build",
+    "dist",
+]
+
+[tool.coverage.run]
+relative_files = true
+omit = [
+    ".tox/*",
+    "tests/*",
+    "src/{{ package_import_name }}/tests/*",
+]
+source = ["{{ package_import_name }}"]
+
+[tool.coverage.report]
+show_missing = true
+exclude_lines = [
+    "pragma: no cover",
+    "@overload",
+]
+
+[tool.mypy]
+check_untyped_defs = true
+warn_unused_ignores = true
+warn_redundant_casts = true
+warn_unused_configs = true
+ignore_missing_imports = true
+
+# BEGIN optional:sphinx-source-tree
+# TEMPLATE: Keep this section only when sphinx-source-tree is used.
+[tool.sphinx-source-tree]
+ignore = [
+    ".amazonq",
+    "*.egg-info",
+    "*.py,cover",
+    "*.pyc",
+    "*.pyo",
+    ".DS_Store",
+    ".coverage",
+    ".coverage.*",
+    ".git",
+    ".hg",
+    ".hypothesis",
+    ".idea",
+    ".mypy_cache",
+    ".nox",
+    ".pre-commit-config.yaml",
+    ".pre-commit-hooks.yaml",
+    ".pytest_cache",
+    ".readthedocs.yaml",
+    ".ruff_cache",
+    ".secrets.baseline",
+    ".svn",
+    ".tox",
+    ".venv",
+    ".vscode",
+    "CHANGELOG.rst",
+    "CODE_OF_CONDUCT.rst",
+    "LICENSE",
+    "SECURITY.rst",
+    "Thumbs.db",
+    "__pycache__",
+    "build",
+    "dist",
+    "docs/Makefile",
+    "docs/_build",
+    "docs/_static",
+    "docs/changelog.rst",
+    "docs/code_of_conduct.rst",
+    "docs/make.bat",
+    "docs/requirements.txt",
+    "docs/security.rst",
+    "docs/source_tree.rst",
+    "docs/source_tree_full.rst",
+    "env",
+    "htmlcov",
+    "node_modules",
+    "venv",
+    "uv.lock",
+    # TEMPLATE: Add generated, vendored, or large data paths here.
+]
+order = [
+    "{{ readme_file }}",
+    "CONTRIBUTING.rst",
+    "AGENTS.md",
+]
+
+[[tool.sphinx-source-tree.files]]
+output = "docs/full_llms.rst"
+title = "Full project source-tree"
+
+[[tool.sphinx-source-tree.files]]
+output = "docs/llms.rst"
+title = "Project source-tree"
+ignore = [
+    "docs",
+    "examples",
+    "uv.lock",
+    # TEMPLATE: Add extra paths to omit from the short source tree.
+]
+# END optional:sphinx-source-tree
