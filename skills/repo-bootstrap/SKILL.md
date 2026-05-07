@@ -8,6 +8,7 @@ description: Bootstrap repository governance by creating AGENTS.md and a standar
 This skill bootstraps **agent-operable governance** for a repository.
 
 When invoked, it creates:
+
 - a clean, authoritative `AGENTS.md`
 - a structured set of `SKILL.md` files, each with a single responsibility
 
@@ -60,6 +61,7 @@ Look for **facts that are already true**, including:
 - CI hints (if present)
 
 Read, if they exist:
+
 - `README`
 - build config files
 - dependency manifests
@@ -91,6 +93,7 @@ tools before writing any SKILL.md files. Do this by reading `Makefile` and
 If a fact is not clearly observable, treat it as unknown and omit it.
 
 Do **not** infer:
+
 - deployment targets
 - cloud providers
 - runtime architecture
@@ -105,6 +108,7 @@ Create `AGENTS.md` at the repository root.
 ### Purpose of AGENTS.md
 
 `AGENTS.md` defines:
+
 - truths about the repository
 - hard constraints
 - known intentional behaviors
@@ -157,7 +161,7 @@ detected in Phase 1. Use real commands, not placeholders.
 
 Template (adapt to actual detected commands):
 
-```markdown
+````markdown
 ## Mandatory workflow (every task, non-negotiable)
 
 **Step 0 — Test decision:** Before writing any code, decide: does this task
@@ -189,7 +193,8 @@ and auto-fixes misalignments.
 
 **Step 7 — Pre-commit gate:**
 <If PRE_COMMIT_CONFIGURED is true:>
-```
+
+```bash
 pre-commit run --all-files
 ```
 <If PRE_COMMIT_CONFIGURED is false:>
@@ -199,9 +204,10 @@ Run all lint commands individually (as in Step 1) to serve as the final gate.
 **Runtime rule — ALWAYS use `<RUNTIME_PREFIX>`.** Never call `python`,
 `python3`, or any project tool directly — they will resolve to the wrong
 Python or missing dependencies. Every tool invocation must use `<RUNTIME_PREFIX>`.
-```
+````
 
 Rules:
+
 - Use the exact `TEST_COMMAND` extracted from Phase 1 (e.g. `uv run pytest -vrx -s`)
 - If a `make` wrapper exists, show both: `make test    # uv run pytest -vrx -s`
 - If `RUNTIME_PREFIX` is set, the runtime rule paragraph is MANDATORY
@@ -233,6 +239,7 @@ relevant file for full guidance:
 ```
 
 Rules for populating the table:
+
 - Include only skills that were actually created in Phase 3
 - Add any project-specific skills beyond the standard set
 
@@ -275,11 +282,13 @@ description: <concise description of the skill’s purpose>
 ### dev-setup/SKILL.md
 
 Focus:
+
 - environment setup
 - dependency installation
 - recovery steps for common environment failures
 
 Include:
+
 - canonical install or sync commands *if observable*
 - fallback or repair instructions
 - **Tool invocation rules derived from Phase 1 runtime detection (MANDATORY)**
@@ -292,6 +301,7 @@ section. Its content depends on what Phase 1 detected:
 **If `RUNTIME_PREFIX` = `uv run` (Makefile uses `uv run` pervasively):**
 
 Write a section titled `## Tool Invocation Rules (MANDATORY)` that:
+
 1. States: “Always prefix tool invocations with `uv run`.”
 2. Shows the canonical test command (exact `TEST_COMMAND` from Phase 1).
 3. Shows examples for each linter/formatter observed in the Makefile.
@@ -308,6 +318,7 @@ invocations.
 **If `RUNTIME_PREFIX` = “none” (bare calls, virtualenv assumed active):**
 
 Write a section titled `## Tool Invocation Rules` that:
+
 1. States the virtualenv must be activated before any tool is called.
 2. Shows the activation command if detectable.
 3. Shows the canonical test command from Phase 1.
@@ -319,6 +330,7 @@ Omit the forbidden list. Document only what was directly observed.
 This section must appear **before** any setup steps so it cannot be missed.
 
 Exclude:
+
 - coding rules
 - lint/test loops
 - PR review logic
@@ -337,6 +349,7 @@ It must include:
 Every task starts with a test decision. Include this as the first step:
 
 > **Step 0 — Test decision**: Before writing any code, decide:
+>
 > - Does this task change or add public API, behavior, or edge cases?
 > - If yes, write or update tests first (or alongside the implementation).
 > - If no, justify explicitly why no new tests are needed.
@@ -346,6 +359,7 @@ Every task starts with a test decision. Include this as the first step:
 > test passes.
 >
 > **Test types:** When writing tests, cover all three:
+>
 > 1. Unit test — targets the specific function or class being changed
 > 2. Integration test — verifies system-level behaviour end-to-end
 > 3. Happy-path test — confirms the existing working flow has not regressed
@@ -358,6 +372,7 @@ State explicitly that this sequence is **mandatory for every task without
 exception**. No task is “too small” or “too obvious” to skip it.
 
 Include:
+
 - an explicit Definition of Done (must list: lint passes, tests pass,
   documentation updated if API changed, pre-commit gate passes)
 - a mandatory lint → fix → test sequence
@@ -386,6 +401,7 @@ runtime prefix.”
 #### 4. Forbidden actions (REQUIRED)
 
 Always include at minimum:
+
 - Never skip tests to complete a task
 - Never bypass linting to complete a task
 - Never modify test assertions to make tests pass
@@ -403,6 +419,7 @@ only then finish — for every task, every time”.
 ### coding-standards/SKILL.md
 
 Focus:
+
 - style rules
 - typing rules
 - naming conventions
@@ -410,11 +427,13 @@ Focus:
 - error-handling philosophy
 
 Include:
+
 - what is required
 - what is prohibited
 - how rules are enforced
 
 Exclude:
+
 - commands to run tools
 - procedural workflows
 
@@ -423,14 +442,17 @@ Exclude:
 ### pr-review/SKILL.md
 
 Focus:
+
 - deterministic pull-request review behavior
 
 Include:
+
 - a numbered checklist
 - explicit “must check” items
 - clear reporting expectations
 
 Exclude:
+
 - implementation guidance
 - development workflow details
 
@@ -439,12 +461,14 @@ Exclude:
 ### update-documentation/SKILL.md
 
 This single skill responsibilities for:
+
 - Documentation policy (precision: scope, authority, exclusions)
 - Updating documentation (behavior: scan, compare, auto-fix, report)
 
 It MUST be comprehensive and explicit.
 
 Focus:
+
 - define documentation authority and scope for this repository
 - keep documentation aligned with code and policy
 - auto-fix safe misalignments (agent edits docs directly)
@@ -472,7 +496,8 @@ Include ALL of the following sections (do not omit):
 4. Documentation files overview and targeting rules
    - Identify which documentation files exist in THIS repository (by scan)
    - For each, state what it is responsible for (end users vs contributors vs agents)
-   - Provide “When to update each file” guidance for each discovered doc (README, AGENTS.md, docs/, CONTRIBUTING, SECURITY, etc.)
+   - Provide “When to update each file” guidance for each discovered doc
+     (README, AGENTS.md, docs/, CONTRIBUTING, SECURITY, etc.)
    - If a file does not exist, do not mention it
 
 5. Feature-specific documentation checklist
@@ -501,6 +526,7 @@ Include ALL of the following sections (do not omit):
    - Do not reformat docs unnecessarily; minimize diffs
 
 Exclude:
+
 - any dependency changes
 - any source code modifications
 - any “fix by changing code to match docs” behavior
