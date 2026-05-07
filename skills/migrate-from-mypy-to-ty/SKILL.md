@@ -27,7 +27,6 @@ This skill applies to all surfaces where `mypy` is referenced:
 This skill MUST NOT modify:
 
 - Source code type annotations
-- Test code (annotations and type: ignore comments are source code concerns)
 - Any file outside the surfaces listed above
 
 ---
@@ -98,14 +97,26 @@ MUST NOT leave a `[tool.mypy]` section with no entries as a "placeholder."
 
 ### Add ty configuration
 
-Add a minimal `[tool.ty]` section. Encode only settings that are explicitly
-required by the project:
+Add a minimal `[tool.ty.environment]` section. Encode only settings that are
+explicitly required by the project:
 
 ```toml
-[tool.ty]
-# src-root is required when the package lives under src/
-src = ["src"]
+[tool.ty.environment]
+# Required when the package lives under src/ — tells ty where to resolve imports
+root = ["src"]
 ```
+
+For multi-root projects (examples, benchmarks, etc.) list every directory that
+must be importable:
+
+```toml
+[tool.ty.environment]
+root = ["src", "benchmarks", "examples/gae"]
+```
+
+Valid top-level keys under `[tool.ty]` are: `environment`, `src`, `rules`,
+`terminal`, `analysis`, `overrides`. Attempting to add any other key (e.g.
+`exclude`) causes a hard TOML parse error.
 
 Rules:
 
@@ -116,6 +127,58 @@ Rules:
 - If `ty` does not support a mypy flag that the project relied on, document the
   gap in a comment and raise it in the completion report rather than silently
   dropping it.
+
+### Ignore comment migration
+
+`# type: ignore` (PEP 484 / mypy syntax) is a **silent no-op in ty**. ty uses
+its own syntax:
+
+```python
+some_expression  # ty: ignore[rule-name]
+```
+
+The rule name matches exactly what ty prints in brackets, e.g.
+`error[unresolved-reference]` → `# ty: ignore[unresolved-reference]`.
+
+Running `uv run ty check --add-ignore` inserts `# ty: ignore` comments
+automatically for every current diagnostic — useful as a starting point.
+
+MUST audit every existing `# type: ignore` comment in the codebase:
+
+1. Run `uv run ty check` and note which locations ty flags.
+2. For each `# type: ignore` location:
+   - If ty still flags it → replace `# type: ignore[...]` with
+     `# ty: ignore[rule-name]`.
+   - If ty does not flag it → remove the comment (it is dead).
+3. Do not leave `# type: ignore` comments as migration artefacts — they provide
+   no suppression and create false confidence.
+
+### Jupyter notebook awareness
+
+ty checks `.ipynb` files by default when it scans the project root. Projects
+with Jupyter notebooks may receive unexpected `unresolved-attribute` errors
+because notebook cells call methods on union return types without type narrowing.
+
+For each failing notebook cell that accesses attributes on a typed result:
+
+- **Preferred fix:** add `assert isinstance(res, ExpectedType)` in the cell
+  where the variable is assigned. ty narrows the type for all subsequent cells.
+- **Alternative:** add `# ty: ignore[unresolved-attribute]` to the specific
+  line inside the cell source.
+
+Do not attempt to suppress notebook errors via `exclude` under `[tool.ty]` —
+that key is not valid there and will cause a parse error.
+
+### Common ty error patterns
+
+Patterns that ty catches which mypy often accepted silently:
+
+| Pattern | ty error code | Fix |
+| ------- | ------------ | --- |
+| `mod.attr = val` on a `types.ModuleType` | `unresolved-attribute` | Use `setattr(mod, "attr", val)` or `# ty: ignore[unresolved-attribute]` |
+| Referencing a runtime-injected global (e.g. kernprof's `profile`) | `unresolved-reference` | Use `# ty: ignore[unresolved-reference]` |
+| Calling a method that doesn't exist on the actual type (e.g. `.close()` on `list`, hidden by `contextlib.suppress`) | `unresolved-attribute` | Remove the dead call |
+| Accessing attributes on a union type without narrowing (e.g. `Optional[Union[str, Result]]`) | `unresolved-attribute` | Add `assert isinstance(...)` or cast before attribute access |
 
 ---
 
@@ -216,8 +279,10 @@ A migration is NOT complete until `uv run ty check` exits zero.
 - MUST NOT blindly copy mypy configuration flags that ty does not support
 - MUST NOT silently drop type errors that mypy caught but ty does not yet catch
   — document any known regressions in the completion report
-- MUST NOT remove `# type: ignore` comments from source code as part of this
-  migration — that is a separate cleanup task
+- MUST NOT leave `# type: ignore` comments in the codebase after migration —
+  ty does not honour them; they suppress nothing and create false confidence.
+  Convert to `# ty: ignore[rule-name]` where ty still flags the location, or
+  remove them where ty does not.
 
 ---
 
