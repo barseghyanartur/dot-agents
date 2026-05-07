@@ -174,7 +174,7 @@ that key is not valid there and will cause a parse error.
 Patterns that ty catches which mypy often accepted silently:
 
 | Pattern | ty error code | Fix |
-|---------|--------------|-----|
+| ------- | ------------ | --- |
 | `mod.attr = val` on a `types.ModuleType` | `unresolved-attribute` | Use `setattr(mod, "attr", val)` or `# ty: ignore[unresolved-attribute]` |
 | Referencing a runtime-injected global (e.g. kernprof's `profile`) | `unresolved-reference` | Use `# ty: ignore[unresolved-reference]` |
 | Calling a method that doesn't exist on the actual type (e.g. `.close()` on `list`, hidden by `contextlib.suppress`) | `unresolved-attribute` | Remove the dead call |

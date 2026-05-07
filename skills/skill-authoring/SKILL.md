@@ -170,57 +170,57 @@ description: <single-sentence purpose>
 
 Rules:
 
-*   `name` MUST match the containing directory name
-*   The header MUST be valid YAML
-*   Extra frontmatter keys are forbidden unless explicitly required
-*   A SKILL.md without this header is invalid
+- `name` MUST match the containing directory name
+- The header MUST be valid YAML
+- Extra frontmatter keys are forbidden unless explicitly required
+- A SKILL.md without this header is invalid
 
-***
+---
 
 ### Repository-specific scope discipline
 
 When generating repository-specific skills, you MUST:
 
-*   Encode **policy**, not operational procedures
-*   Prefer invariants (“MUST”, “MUST NOT”) over step-by-step instructions
-*   Avoid restating workflows governed elsewhere (e.g. `dev-workflow`)
-*   Refer to other skills for enforcement, not for implementation details
-*   Keep each skill limited to **exactly one responsibility**
+- Encode **policy**, not operational procedures
+- Prefer invariants (“MUST”, “MUST NOT”) over step-by-step instructions
+- Avoid restating workflows governed elsewhere (e.g. `dev-workflow`)
+- Refer to other skills for enforcement, not for implementation details
+- Keep each skill limited to **exactly one responsibility**
 
-***
+---
 
 ### Cross-skill awareness
 
 If the generated skill:
 
-*   affects documentation
-*   defines correctness or validation rules
-*   introduces testable guarantees
+- affects documentation
+- defines correctness or validation rules
+- introduces testable guarantees
 
 you MUST ensure it does not bypass or weaken relevant enforcement skills
 (such as `doc-codeblock-tests`).
 
 Such alignment MUST be encoded explicitly.
 
-***
+---
 
 ## Failure semantics (IMPORTANT)
 
 If a requested skill cannot be created without violating higher authority:
 
-*   Pause
-*   Explain the constraint
-*   Ask for guidance
+- Pause
+- Explain the constraint
+- Ask for guidance
 
 Doing nothing is preferable to producing an invalid or unsafe skill.
 
-***
+---
 
 ## Completion report (MANDATORY)
 
 After successful generation or modification, report:
 
-*   the path of the affected SKILL.md file
-*   inherited constraints from existing rules
-*   declared dependencies on other skills
-*   any explicit overrides approved by the developer
+- the path of the affected SKILL.md file
+- inherited constraints from existing rules
+- declared dependencies on other skills
+- any explicit overrides approved by the developer
