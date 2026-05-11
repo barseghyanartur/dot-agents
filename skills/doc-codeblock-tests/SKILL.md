@@ -6,7 +6,7 @@ description: Validate Python code blocks in Markdown documentation using pytest-
 # Markdown code block tests (AUTHORITATIVE)
 
 This skill enforces correctness of Python code examples in Markdown (`.md`) files
-by executing them as tests using `pytest-codeblock`.
+by executing them as tests using [pytest-codeblock](https://pytest-codeblock.readthedocs.io/en/latest/source_tree.txt).
 
 Broken documentation examples are treated as test failures.
 
@@ -31,7 +31,7 @@ All Python code blocks in Markdown MUST:
 Example (guaranteed-valid, stdlib-only):
 
 ````markdown
-```python test_pathlib_basics
+```python name=test_pathlib_basics
 from pathlib import Path
 
 p = Path("example.txt")
