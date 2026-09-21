@@ -23,7 +23,8 @@ Before reviewing:
 3. Apply instructions to their documented scope and use the agent client's precedence
    rules. Report unresolved conflicts instead of choosing silently.
 4. Resolve the exact review target and intended base. For branches, use the merge
-   base; for local work, include staged and unstaged changes and state what was read.
+   base; for local work, include staged and unstaged changes, enumerate untracked
+   paths via `git status` and inspect each untracked file, and state what was read.
 5. Capture the change's intent from the request, PR, issue, tests, and documentation.
 
 Repository policy is binding whenever present. This skill is otherwise standalone:
