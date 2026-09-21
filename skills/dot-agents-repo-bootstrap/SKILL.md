@@ -1,5 +1,5 @@
 ---
-name: repo-bootstrap
+name: dot-agents-repo-bootstrap
 description: Bootstrap repository governance by creating AGENTS.md and a standard set of SKILL.md files.
 ---
 
@@ -188,7 +188,7 @@ tests first (or alongside). Never skip this decision.
 Maximum 3 lint → test iterations. After 3, stop and report.
 
 **Step 6 — Documentation gate:** If you changed public API, CLI flags, or
-default limits, run the `update-documentation` skill. It scans code vs docs
+default limits, run the `dot-agents-update-documentation` skill. It scans code vs docs
 and auto-fixes misalignments.
 
 **Step 7 — Pre-commit gate:**
@@ -231,11 +231,11 @@ relevant file for full guidance:
 
 | Skill | When to read |
 |-------|--------------|
-| `dev-setup` | Environment setup or dependency troubleshooting |
-| `dev-workflow` | Full Definition of Done and retry logic |
-| `coding-standards` | Style, typing, and naming rules |
-| `pr-review` | Pull request review checklist |
-| `update-documentation` | API, CLI, or behaviour changes |
+| `dot-agents-dev-setup` | Environment setup or dependency troubleshooting |
+| `dot-agents-dev-workflow` | Full Definition of Done and retry logic |
+| `dot-agents-coding-standards` | Style, typing, and naming rules |
+| `dot-agents-code-review` | PR, branch, commit, or local-diff review |
+| `dot-agents-update-documentation` | API, CLI, or behaviour changes |
 ```
 
 Rules for populating the table:
@@ -251,19 +251,21 @@ Create the following directories and files:
 
 ```text
 .agents/skills/
-├── dev-setup/
+├── dot-agents-dev-setup/
 │   └── SKILL.md
-├── dev-workflow/
+├── dot-agents-dev-workflow/
 │   └── SKILL.md
-├── coding-standards/
+├── dot-agents-coding-standards/
 │   └── SKILL.md
-├── pr-review/
+├── dot-agents-code-review/
 │   └── SKILL.md
-├── update-documentation/
+├── dot-agents-update-documentation/
 │   └── SKILL.md
 ```
 
 Each SKILL.md must be valid, self-contained, and have a single responsibility.
+Every generated skill directory and frontmatter `name` MUST use the
+`dot-agents-` prefix.
 
 ### Required SKILL.md header (MANDATORY)
 
@@ -279,7 +281,7 @@ description: <concise description of the skill’s purpose>
 
 ---
 
-### dev-setup/SKILL.md
+### dot-agents-dev-setup/SKILL.md
 
 Focus:
 
@@ -295,7 +297,7 @@ Include:
 
 #### Tool Invocation Rules section (derived from Phase 1 scan)
 
-The **first section** of `dev-setup/SKILL.md` MUST be a “Tool Invocation Rules”
+The **first section** of `dot-agents-dev-setup/SKILL.md` MUST be a “Tool Invocation Rules”
 section. Its content depends on what Phase 1 detected:
 
 **If `RUNTIME_PREFIX` = `uv run` (Makefile uses `uv run` pervasively):**
@@ -337,7 +339,7 @@ Exclude:
 
 ---
 
-### dev-workflow/SKILL.md
+### dot-agents-dev-workflow/SKILL.md
 
 This file defines the **Definition of Done**. It is non-negotiable: every task
 MUST follow it completely. No step may be skipped for any reason.
@@ -377,7 +379,7 @@ Include:
   documentation updated if API changed, pre-commit gate passes)
 - a mandatory lint → fix → test sequence
 - a documentation gate step: if public API, CLI flags, or defaults changed,
-  run the `update-documentation` skill
+  run the `dot-agents-update-documentation` skill
 - a pre-commit gate as the final step:
   - if `PRE_COMMIT_CONFIGURED` is true: `pre-commit run --all-files`
   - if `PRE_COMMIT_CONFIGURED` is false: re-run all detected lint commands
@@ -416,7 +418,7 @@ only then finish — for every task, every time”.
 
 ---
 
-### coding-standards/SKILL.md
+### dot-agents-coding-standards/SKILL.md
 
 Focus:
 
@@ -439,26 +441,46 @@ Exclude:
 
 ---
 
-### pr-review/SKILL.md
+### dot-agents-code-review/SKILL.md
 
-Focus:
+Create a standalone, read-only review skill for pull requests, branches, commits,
+and local diffs. It MUST work even when no other dot-agents skill is installed.
 
-- deterministic pull-request review behavior
+It MUST require the reviewer to:
 
-Include:
+1. Discover and read applicable `AGENTS.md`, `CLAUDE.md`, nested instruction files,
+   and repository skills or rules for quality, security, architecture, testing,
+   documentation, and workflow. Do not assume a client-specific skill directory.
+2. Treat repository policy as binding without weakening its definition of done or
+   replacing its validation commands. Use generic review gates when no policy exists.
+3. Resolve the exact diff and intended base, capture intent, and inspect changed
+   contracts and exact consumers before broad codebase exploration.
+4. Review applicable correctness, security/privacy, compatibility, reliability,
+   performance, and behavioral-test risks without requiring findings in each category.
+5. Use independent specialist or verifier agents only when available and proportional
+   to risk; the parent reviewer remains responsible for every reported finding.
+6. Publish a finding only when it identifies the changed line, reachable trigger,
+   concrete failure and impact, code evidence, falsifiable verification, minimal fix
+   direction, and medium or high confidence.
+7. Reject style preferences, speculation, unrelated pre-existing defects, duplicates,
+   and issues prevented by existing guards, types, tests, framework behavior, or
+   deployment configuration. Check whether each issue exists on the base revision.
+8. Run safe, repository-approved checks proportionate to risk. If none are documented,
+   derive checks only from committed configuration. Never install dependencies, mutate
+   shared data, access production, start paid services, or run destructive commands
+   merely for review.
+9. Report confirmed findings first, ordered `P0` through `P3`, with location, trigger,
+   failure, impact, evidence, verification, minimal fix, and confidence. Then report
+   open questions, validation, scope, and residual risks. Explicitly state when no
+   defects are confirmed; never manufacture findings.
 
-- a numbered checklist
-- explicit “must check” items
-- clear reporting expectations
-
-Exclude:
-
-- implementation guidance
-- development workflow details
+The skill MUST NOT edit code, publish review comments, approve, or request changes
+unless the user explicitly asks. It MUST NOT expose secrets or execute untrusted code
+without assessing it.
 
 ---
 
-### update-documentation/SKILL.md
+### dot-agents-update-documentation/SKILL.md
 
 This single skill responsibilities for:
 

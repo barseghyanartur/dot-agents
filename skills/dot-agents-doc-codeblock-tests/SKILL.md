@@ -1,5 +1,5 @@
 ---
-name: doc-codeblock-tests
+name: dot-agents-doc-codeblock-tests
 description: Validate Python code blocks in Markdown documentation using pytest-codeblock.
 ---
 
@@ -67,7 +67,7 @@ No special configuration is required unless the project explicitly defines it.
 
 ---
 
-## Alignment with dev-workflow
+## Alignment with dot-agents-dev-workflow
 
 This skill is **not standalone**.
 
@@ -78,7 +78,7 @@ When modifying documentation:
   - blocks completion
   - must be fixed before work is considered done
 
-This integrates automatically with the repository’s `dev-workflow` (or similar)
+This integrates automatically with the repository’s `dot-agents-dev-workflow` (or similar)
 definition of “done”.
 
 ---
