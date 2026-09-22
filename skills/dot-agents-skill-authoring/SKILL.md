@@ -1,6 +1,8 @@
 ---
-name: skill-authoring
+name: dot-agents-skill-authoring
 description: Create and modify repository-specific SKILL.md policy files in strict compliance with AGENTS.md and existing project skills.
+metadata:
+  version: "0.2"
 ---
 
 # Skill authoring (AUTHORITATIVE)
@@ -37,7 +39,7 @@ of authority:
 
 1. `AGENTS.md`
 2. Existing project-level SKILL.md files
-3. This `skill-authoring` skill
+3. This `dot-agents-skill-authoring` skill
 4. Newly generated or modified skills
 
 Lower levels MUST comply with higher levels at all times.
@@ -114,7 +116,7 @@ You MUST detect conflicts between the proposed skill and:
 
 - `AGENTS.md`
 - existing project SKILL.md files
-- enforced workflows (e.g. `dev-workflow`)
+- enforced workflows (e.g. `dot-agents-dev-workflow`)
 - enforcement skills (e.g. documentation or testing policies)
 
 Conflicts include, but are not limited to:
@@ -183,7 +185,7 @@ When generating repository-specific skills, you MUST:
 
 - Encode **policy**, not operational procedures
 - Prefer invariants (“MUST”, “MUST NOT”) over step-by-step instructions
-- Avoid restating workflows governed elsewhere (e.g. `dev-workflow`)
+- Avoid restating workflows governed elsewhere (e.g. `dot-agents-dev-workflow`)
 - Refer to other skills for enforcement, not for implementation details
 - Keep each skill limited to **exactly one responsibility**
 
@@ -198,7 +200,7 @@ If the generated skill:
 - introduces testable guarantees
 
 you MUST ensure it does not bypass or weaken relevant enforcement skills
-(such as `doc-codeblock-tests`).
+(such as `dot-agents-doc-codeblock-tests`).
 
 Such alignment MUST be encoded explicitly.
 
