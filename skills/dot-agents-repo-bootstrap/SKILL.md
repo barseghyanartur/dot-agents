@@ -444,39 +444,133 @@ Exclude:
 ### dot-agents-code-review/SKILL.md
 
 Create a standalone, read-only review skill for pull requests, branches, commits,
-and local diffs. It MUST work even when no other dot-agents skill is installed.
+and local diffs. It MUST work even when no other dot-agents skill is installed,
+and it MUST NOT depend on any of the other skills created in this phase.
 
-It MUST require the reviewer to:
+A flat checklist is not sufficient here: this skill must be as rigorous as a
+mature, previously-hardened review skill, so structure it as the five ordered
+sections below, each with the full sub-criteria listed — not just the section
+title.
 
-1. Discover and read applicable `AGENTS.md`, `CLAUDE.md`, nested instruction files,
-   and repository skills or rules for quality, security, architecture, testing,
-   documentation, and workflow. Do not assume a client-specific skill directory.
-2. Treat repository policy as binding without weakening its definition of done or
-   replacing its validation commands. Use generic review gates when no policy exists.
-3. Resolve the exact diff and intended base, capture intent, and inspect changed
-   contracts and exact consumers before broad codebase exploration.
-4. Review applicable correctness, security/privacy, compatibility, reliability,
-   performance, and behavioral-test risks without requiring findings in each category.
-5. Use independent specialist or verifier agents only when available and proportional
-   to risk; the parent reviewer remains responsible for every reported finding.
-6. Publish a finding only when it identifies the changed line, reachable trigger,
-   concrete failure and impact, code evidence, falsifiable verification, minimal fix
-   direction, and medium or high confidence.
-7. Reject style preferences, speculation, unrelated pre-existing defects, duplicates,
-   and issues prevented by existing guards, types, tests, framework behavior, or
-   deployment configuration. Check whether each issue exists on the base revision.
-8. Run safe, repository-approved checks proportionate to risk. If none are documented,
-   derive checks only from committed configuration. Never install dependencies, mutate
-   shared data, access production, start paid services, or run destructive commands
-   merely for review.
-9. Report confirmed findings first, ordered `P0` through `P3`, with location, trigger,
-   failure, impact, evidence, verification, minimal fix, and confidence. Then report
-   open questions, validation, scope, and residual risks. Explicitly state when no
-   defects are confirmed; never manufacture findings.
+#### 1. Establish authority and scope
 
-The skill MUST NOT edit code, publish review comments, approve, or request changes
-unless the user explicitly asks. It MUST NOT expose secrets or execute untrusted code
-without assessing it.
+- Discover and read every applicable `AGENTS.md`, `CLAUDE.md`, and other
+  repository instruction file, including nested files governing changed code.
+- Discover and read applicable repository skills and rules for code quality,
+  security, architecture, testing, documentation, and workflow. Do not assume
+  any particular skill exists or lives in a particular client directory.
+- Apply instructions to their documented scope using the agent client's
+  precedence rules; report unresolved conflicts instead of choosing silently.
+- Resolve the exact review target and intended base:
+  - for branches, use the merge base;
+  - for local work, include staged and unstaged changes, enumerate untracked
+    paths via `git status`, inspect each untracked file, and state what was
+    read.
+- Capture the change's intent from the request, PR, issue, tests, and
+  documentation.
+- Treat repository policy as binding whenever present; this skill's own
+  review gates are the generic fallback only. Never invent repository
+  conventions, weaken repository requirements, redefine the repository's
+  definition of done, or replace its documented validation commands.
+
+#### 2. Inspect the change
+
+- Start from the diff; inspect only enough surrounding code and history to
+  verify behavior.
+- Identify changes to observable contracts: APIs, events, schemas,
+  serialization, and persisted data; configuration, defaults, feature flags,
+  deployment, and dependencies; authentication, authorization, ownership,
+  privacy, and secret handling; concurrency, retries, timeouts, ordering,
+  cancellation, and resource lifecycle; exported interfaces, exceptions, and
+  caller-visible semantics.
+- For each changed contract, record its old and new behavior, exact
+  identifiers, owner, and plausible consumers. Search exact identifiers
+  before broad concepts. Inspect another repository only when a changed
+  contract or known boundary makes it a plausible consumer, and record
+  meaningful hits and relevant verified no-match results.
+- Ignore generated, vendored, coverage, and lock-file churn unless it creates
+  a build, dependency, integrity, or supply-chain risk.
+
+#### 3. Review by risk
+
+Check applicable risks, not a fixed quota of categories:
+
+- **Correctness** — reachable edge cases, validation, state transitions,
+  error paths, and behavior inconsistent with stated intent.
+- **Security and privacy** — trust boundaries, injection, authn/authz,
+  tenant or user scoping, unsafe deserialization, sensitive data, secrets,
+  and dependency risk.
+- **Compatibility** — callers and consumers of changed API, schema, event,
+  config, storage, or library contracts.
+- **Reliability** — partial failure, retries, idempotency, races,
+  deadlocks, ordering, cancellation, cleanup, and timeout behavior.
+- **Performance** — hot-path amplification, blocking work, unbounded input
+  or memory, excessive calls or queries, and payload growth.
+- **Tests** — missing coverage only when it leaves a concrete changed
+  behavior or failure mode unverified.
+
+Use independent specialist or verifier subagents when available and
+proportional to the change's risk; give them focused diffs, relevant
+instructions, contract evidence, and exact consumer hits, but keep
+conclusions independent and verify them in the parent review. Do not require
+subagents for a small, low-risk diff.
+
+#### 4. Gate and verify findings
+
+A publishable finding MUST include: the changed file and line; a reachable
+trigger or state; the resulting failure and concrete impact; supporting code
+or contract evidence; a falsifiable verification step or executed
+reproduction; the smallest safe fix direction; and medium or high confidence.
+
+Reject style preferences, speculative risks, unrelated pre-existing defects,
+duplicates, and issues prevented by existing guards, types, tests, framework
+behavior, or deployment configuration. Check whether each issue also exists
+on the base revision.
+
+Run the cheapest repository-approved check that can falsify each surviving
+finding, then broader checks proportional to the blast radius. When no
+commands are documented, derive only safe checks from committed project
+configuration and state that basis. Inspect commands from changed branches
+before running them. Do not install dependencies, mutate shared data, access
+production, start paid services, or run destructive commands merely for a
+review. State which checks were not run and why.
+
+#### 5. Report findings first
+
+Order confirmed findings by severity, then confidence, using this taxonomy:
+
+- `P0` — catastrophic and release-blocking.
+- `P1` — likely serious production, security, or data impact.
+- `P2` — concrete defect with limited impact.
+- `P3` — concrete low-impact defect; never used for style.
+
+Each finding MUST use this exact template:
+
+```text
+### [P1] Imperative, specific title
+Location: path/to/file.ext:line
+Trigger: Exact input, state, or sequence
+Failure: What happens and why
+Impact: User or system consequence
+Evidence: Changed code and relevant caller or consumer evidence
+Verification: Check performed or deterministic falsification path
+Minimal fix: Smallest safe direction
+Confidence: High or Medium
+```
+
+After findings, report open questions, validation performed, review scope,
+and residual risks. If there are no confirmed defects, say so explicitly and
+identify any testing or execution gaps. Never manufacture findings to fill
+categories.
+
+The generated skill MUST NOT edit code, publish review comments, approve, or
+request changes unless the user explicitly asks. It MUST NOT expose secrets
+or execute untrusted code without assessing it.
+
+Maintainer note: this specification is intentionally a close mirror of
+`skills/dot-agents-code-review/SKILL.md` in this repository. If that file's
+review process changes, update this section to match so bootstrapped repos
+get an equally rigorous skill.
 
 ---
 
