@@ -1,6 +1,8 @@
 ---
 name: dot-agents-code-review
 description: Review pull requests, branches, commits, or local diffs for evidence-backed defects and security risks.
+metadata:
+  version: "0.2"
 ---
 
 # Code review

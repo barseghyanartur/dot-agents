@@ -1,6 +1,8 @@
 ---
 name: dot-agents-repo-bootstrap
 description: Bootstrap repository governance by creating AGENTS.md and a standard set of SKILL.md files.
+metadata:
+  version: "0.2"
 ---
 
 # Repository bootstrap (AUTHORITATIVE)

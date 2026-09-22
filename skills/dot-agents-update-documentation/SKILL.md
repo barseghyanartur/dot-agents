@@ -1,6 +1,8 @@
 ---
 name: dot-agents-update-documentation
 description: Keep project documentation aligned with code by detecting and auto-fixing mismatches using agent-based analysis.
+metadata:
+  version: "0.2"
 ---
 
 # Update Documentation (AUTHORITATIVE)

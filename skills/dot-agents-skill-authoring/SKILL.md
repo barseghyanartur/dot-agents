@@ -1,6 +1,8 @@
 ---
 name: dot-agents-skill-authoring
 description: Create and modify repository-specific SKILL.md policy files in strict compliance with AGENTS.md and existing project skills.
+metadata:
+  version: "0.2"
 ---
 
 # Skill authoring (AUTHORITATIVE)

@@ -1,6 +1,8 @@
 ---
 name: dot-agents-migrate-to-uv
 description: Migrate Python repositories from virtualenv, virtualenvwrapper, pip-tools, requirements files, setup.py, or setup.cfg to a uv-managed pyproject.toml and uv.lock workflow.
+metadata:
+  version: "0.2"
 ---
 
 # Migrate Python Project to uv

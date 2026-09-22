@@ -1,6 +1,8 @@
 ---
 name: dot-agents-migrate-from-mypy-to-ty
 description: Migrate Python repositories from mypy to ty for static type checking.
+metadata:
+  version: "0.2"
 ---
 
 # Migrate from mypy to ty (AUTHORITATIVE)
