@@ -1,6 +1,8 @@
 ---
-name: migrate-from-mypy-to-ty
+name: dot-agents-migrate-from-mypy-to-ty
 description: Migrate Python repositories from mypy to ty for static type checking.
+metadata:
+  version: "0.2"
 ---
 
 # Migrate from mypy to ty (AUTHORITATIVE)
@@ -31,9 +33,9 @@ This skill MUST NOT modify:
 
 ---
 
-## Relationship with migrate-to-uv
+## Relationship with dot-agents-migrate-to-uv
 
-If the `migrate-to-uv` skill was previously applied, the following artifacts
+If the `dot-agents-migrate-to-uv` skill was previously applied, the following artifacts
 reference `mypy` and MUST be updated by this skill:
 
 - Verification commands: `uv run mypy {{ mypy_paths }}` → `uv run ty check`
@@ -220,8 +222,8 @@ Inspect `.pre-commit-config.yaml` for any mypy hook:
 **Critical — extras and import resolution**: `uv run ty check` creates a fresh
 `.venv` containing only the project's base (non-optional) dependencies. ty uses
 that environment for import resolution. If any source files import packages that
-live in optional dependency groups (e.g. `pytest` in `test`, `ty` itself 
-in `lint`), ty will emit `unresolved-import` errors for those modules even 
+live in optional dependency groups (e.g. `pytest` in `test`, `ty` itself
+in `lint`), ty will emit `unresolved-import` errors for those modules even
 though they are installed elsewhere.
 
 Fix: pass `--extra <group>` for every optional group whose packages appear in
@@ -259,14 +261,14 @@ Update all documentation referencing `mypy`:
 - Developer guides
 - `docs/` pages with type checking instructions
 - AGENTS.md or SKILL.md files that name `mypy` explicitly (e.g. verification
-  sequences in `migrate-to-uv` or `dev-workflow`)
+  sequences in `dot-agents-migrate-to-uv` or `dot-agents-dev-workflow`)
 
 MUST NOT leave user-facing documentation that instructs users to run `mypy`
 after this migration is complete.
 
 If any code examples in Markdown reference `mypy`, they MUST be updated to
 reference `ty`. Code examples in Markdown MUST comply with the
-`doc-codeblock-tests` skill (Python code blocks must be named `test_*`).
+`dot-agents-doc-codeblock-tests` skill (Python code blocks must be named `test_*`).
 
 ---
 

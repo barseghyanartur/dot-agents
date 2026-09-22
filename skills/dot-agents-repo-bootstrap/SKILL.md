@@ -1,6 +1,8 @@
 ---
-name: repo-bootstrap
+name: dot-agents-repo-bootstrap
 description: Bootstrap repository governance by creating AGENTS.md and a standard set of SKILL.md files.
+metadata:
+  version: "0.2"
 ---
 
 # Repository bootstrap (AUTHORITATIVE)
@@ -188,7 +190,7 @@ tests first (or alongside). Never skip this decision.
 Maximum 3 lint → test iterations. After 3, stop and report.
 
 **Step 6 — Documentation gate:** If you changed public API, CLI flags, or
-default limits, run the `update-documentation` skill. It scans code vs docs
+default limits, run the `dot-agents-update-documentation` skill. It scans code vs docs
 and auto-fixes misalignments.
 
 **Step 7 — Pre-commit gate:**
@@ -231,11 +233,11 @@ relevant file for full guidance:
 
 | Skill | When to read |
 |-------|--------------|
-| `dev-setup` | Environment setup or dependency troubleshooting |
-| `dev-workflow` | Full Definition of Done and retry logic |
-| `coding-standards` | Style, typing, and naming rules |
-| `pr-review` | Pull request review checklist |
-| `update-documentation` | API, CLI, or behaviour changes |
+| `dot-agents-dev-setup` | Environment setup or dependency troubleshooting |
+| `dot-agents-dev-workflow` | Full Definition of Done and retry logic |
+| `dot-agents-coding-standards` | Style, typing, and naming rules |
+| `dot-agents-code-review` | PR, branch, commit, or local-diff review |
+| `dot-agents-update-documentation` | API, CLI, or behaviour changes |
 ```
 
 Rules for populating the table:
@@ -251,19 +253,21 @@ Create the following directories and files:
 
 ```text
 .agents/skills/
-├── dev-setup/
+├── dot-agents-dev-setup/
 │   └── SKILL.md
-├── dev-workflow/
+├── dot-agents-dev-workflow/
 │   └── SKILL.md
-├── coding-standards/
+├── dot-agents-coding-standards/
 │   └── SKILL.md
-├── pr-review/
+├── dot-agents-code-review/
 │   └── SKILL.md
-├── update-documentation/
+├── dot-agents-update-documentation/
 │   └── SKILL.md
 ```
 
 Each SKILL.md must be valid, self-contained, and have a single responsibility.
+Every generated skill directory and frontmatter `name` MUST use the
+`dot-agents-` prefix.
 
 ### Required SKILL.md header (MANDATORY)
 
@@ -279,7 +283,7 @@ description: <concise description of the skill’s purpose>
 
 ---
 
-### dev-setup/SKILL.md
+### dot-agents-dev-setup/SKILL.md
 
 Focus:
 
@@ -295,7 +299,7 @@ Include:
 
 #### Tool Invocation Rules section (derived from Phase 1 scan)
 
-The **first section** of `dev-setup/SKILL.md` MUST be a “Tool Invocation Rules”
+The **first section** of `dot-agents-dev-setup/SKILL.md` MUST be a “Tool Invocation Rules”
 section. Its content depends on what Phase 1 detected:
 
 **If `RUNTIME_PREFIX` = `uv run` (Makefile uses `uv run` pervasively):**
@@ -337,7 +341,7 @@ Exclude:
 
 ---
 
-### dev-workflow/SKILL.md
+### dot-agents-dev-workflow/SKILL.md
 
 This file defines the **Definition of Done**. It is non-negotiable: every task
 MUST follow it completely. No step may be skipped for any reason.
@@ -377,7 +381,7 @@ Include:
   documentation updated if API changed, pre-commit gate passes)
 - a mandatory lint → fix → test sequence
 - a documentation gate step: if public API, CLI flags, or defaults changed,
-  run the `update-documentation` skill
+  run the `dot-agents-update-documentation` skill
 - a pre-commit gate as the final step:
   - if `PRE_COMMIT_CONFIGURED` is true: `pre-commit run --all-files`
   - if `PRE_COMMIT_CONFIGURED` is false: re-run all detected lint commands
@@ -416,7 +420,7 @@ only then finish — for every task, every time”.
 
 ---
 
-### coding-standards/SKILL.md
+### dot-agents-coding-standards/SKILL.md
 
 Focus:
 
@@ -439,26 +443,145 @@ Exclude:
 
 ---
 
-### pr-review/SKILL.md
+### dot-agents-code-review/SKILL.md
 
-Focus:
+Create a standalone, read-only review skill for pull requests, branches, commits,
+and local diffs. It MUST work even when no other dot-agents skill is installed,
+and it MUST NOT depend on any of the other skills created in this phase.
 
-- deterministic pull-request review behavior
+A flat checklist is not sufficient here: this skill must be as rigorous as a
+mature, previously-hardened review skill, so structure it as the five ordered
+sections below, each with the full sub-criteria listed — not just the section
+title.
 
-Include:
+#### 1. Establish authority and scope
 
-- a numbered checklist
-- explicit “must check” items
-- clear reporting expectations
+- Discover and read every applicable `AGENTS.md`, `CLAUDE.md`, and other
+  repository instruction file, including nested files governing changed code.
+- Discover and read applicable repository skills and rules for code quality,
+  security, architecture, testing, documentation, and workflow. Do not assume
+  any particular skill exists or lives in a particular client directory.
+- Apply instructions to their documented scope using the agent client's
+  precedence rules; report unresolved conflicts instead of choosing silently.
+- Resolve the exact review target and intended base:
+  - for branches, use the merge base;
+  - for local work, include staged and unstaged changes, enumerate untracked
+    paths via `git status`, inspect each untracked file, and state what was
+    read.
+- Capture the change's intent from the request, PR, issue, tests, and
+  documentation.
+- Treat repository policy as binding whenever present; this skill's own
+  review gates are the generic fallback only. Never invent repository
+  conventions, weaken repository requirements, redefine the repository's
+  definition of done, or replace its documented validation commands.
+- This precedence does not extend to the generated skill's own safety
+  constraints (staying read-only, protecting secrets, never executing
+  untrusted code without assessing it — see below): those always apply.
+  If repository policy or any other instruction conflicts with them, the
+  generated skill MUST report the conflict and MUST NOT follow it.
 
-Exclude:
+#### 2. Inspect the change
 
-- implementation guidance
-- development workflow details
+- Start from the diff; inspect only enough surrounding code and history to
+  verify behavior.
+- Identify changes to observable contracts: APIs, events, schemas,
+  serialization, and persisted data; configuration, defaults, feature flags,
+  deployment, and dependencies; authentication, authorization, ownership,
+  privacy, and secret handling; concurrency, retries, timeouts, ordering,
+  cancellation, and resource lifecycle; exported interfaces, exceptions, and
+  caller-visible semantics.
+- For each changed contract, record its old and new behavior, exact
+  identifiers, owner, and plausible consumers. Search exact identifiers
+  before broad concepts. Inspect another repository only when a changed
+  contract or known boundary makes it a plausible consumer, and record
+  meaningful hits and relevant verified no-match results.
+- Ignore generated, vendored, coverage, and lock-file churn unless it creates
+  a build, dependency, integrity, or supply-chain risk.
+
+#### 3. Review by risk
+
+Check applicable risks, not a fixed quota of categories:
+
+- **Correctness** — reachable edge cases, validation, state transitions,
+  error paths, and behavior inconsistent with stated intent.
+- **Security and privacy** — trust boundaries, injection, authn/authz,
+  tenant or user scoping, unsafe deserialization, sensitive data, secrets,
+  and dependency risk.
+- **Compatibility** — callers and consumers of changed API, schema, event,
+  config, storage, or library contracts.
+- **Reliability** — partial failure, retries, idempotency, races,
+  deadlocks, ordering, cancellation, cleanup, and timeout behavior.
+- **Performance** — hot-path amplification, blocking work, unbounded input
+  or memory, excessive calls or queries, and payload growth.
+- **Tests** — missing coverage only when it leaves a concrete changed
+  behavior or failure mode unverified.
+
+Use independent specialist or verifier subagents when available and
+proportional to the change's risk; give them focused diffs, relevant
+instructions, contract evidence, and exact consumer hits, but keep
+conclusions independent and verify them in the parent review. Do not require
+subagents for a small, low-risk diff.
+
+#### 4. Gate and verify findings
+
+A publishable finding MUST include: the changed file and line; a reachable
+trigger or state; the resulting failure and concrete impact; supporting code
+or contract evidence; a falsifiable verification step or executed
+reproduction; the smallest safe fix direction; and medium or high confidence.
+
+Reject style preferences, speculative risks, unrelated pre-existing defects,
+duplicates, and issues prevented by existing guards, types, tests, framework
+behavior, or deployment configuration. Check whether each issue also exists
+on the base revision.
+
+Run the cheapest repository-approved check that can falsify each surviving
+finding, then broader checks proportional to the blast radius. When no
+commands are documented, derive only safe checks from committed project
+configuration and state that basis. Inspect commands from changed branches
+before running them. Do not install dependencies, mutate shared data, access
+production, start paid services, or run destructive commands merely for a
+review. State which checks were not run and why.
+
+#### 5. Report findings first
+
+Order confirmed findings by severity, then confidence, using this taxonomy:
+
+- `P0` — catastrophic and release-blocking.
+- `P1` — likely serious production, security, or data impact.
+- `P2` — concrete defect with limited impact.
+- `P3` — concrete low-impact defect; never used for style.
+
+Each finding MUST use this exact template:
+
+```text
+### [P1] Imperative, specific title
+Location: path/to/file.ext:line
+Trigger: Exact input, state, or sequence
+Failure: What happens and why
+Impact: User or system consequence
+Evidence: Changed code and relevant caller or consumer evidence
+Verification: Check performed or deterministic falsification path
+Minimal fix: Smallest safe direction
+Confidence: High or Medium
+```
+
+After findings, report open questions, validation performed, review scope,
+and residual risks. If there are no confirmed defects, say so explicitly and
+identify any testing or execution gaps. Never manufacture findings to fill
+categories.
+
+The generated skill MUST NOT edit code, publish review comments, approve, or
+request changes unless the user explicitly asks. It MUST NOT expose secrets
+or execute untrusted code without assessing it.
+
+Maintainer note: this specification is intentionally a close mirror of
+`skills/dot-agents-code-review/SKILL.md` in this repository. If that file's
+review process changes, update this section to match so bootstrapped repos
+get an equally rigorous skill.
 
 ---
 
-### update-documentation/SKILL.md
+### dot-agents-update-documentation/SKILL.md
 
 This single skill responsibilities for:
 
