@@ -1,0 +1,29 @@
+{
+  "skill_name": "dot-agents-code-optimisation",
+  "evals": [
+    {
+      "id": 0,
+      "eval_name": "n-plus-one-and-selection-sort",
+      "setup": "Extract evals/fixtures/eval-0-n-plus-one.tar.gz to a scratch directory and cd into the extracted eval-n-plus-one/ git repo before running the prompt. It has two commits; HEAD (361f60d) adds an N+1 order fetch plus a hand-rolled O(n^2) top-k sort on top of a base commit (8a6114b).",
+      "files": ["evals/fixtures/eval-0-n-plus-one.tar.gz"],
+      "prompt": "Review my last commit in this repo (orders.py) for any performance or efficiency issues before I open the PR. It's a reporting helper that loops over user ids to build a spend report.",
+      "expected_output": "Flags the per-user get_orders_for_user call inside build_report/total_spend as an N+1 pattern (batchable), and flags top_spenders' manual selection-sort loop as an avoidable O(n^2) that Python's sorted()/heapq can replace. No fabricated correctness/security findings."
+    },
+    {
+      "id": 1,
+      "eval_name": "duplicate-validators-and-dead-code",
+      "setup": "Extract evals/fixtures/eval-1-duplicate-validation.tar.gz to a scratch directory and cd into the extracted eval-duplicate-validation/ git repo before running the prompt. HEAD adds app/profile.py, which duplicates app/validators.py and includes dead code plus an unused import.",
+      "files": ["evals/fixtures/eval-1-duplicate-validation.tar.gz"],
+      "prompt": "I just added app/profile.py in the latest commit. Can you check it over for any redundancy or cleanup before I merge? There's already an app/validators.py in this repo.",
+      "expected_output": "Flags _check_email/_check_username in profile.py as duplicates of is_valid_email/is_valid_username in app/validators.py (should import/reuse instead), flags the unused `json` import, and flags _legacy_username_check as dead code (no call sites). No fabricated findings beyond these."
+    },
+    {
+      "id": 2,
+      "eval_name": "clean-diff-no-real-issues",
+      "setup": "Extract evals/fixtures/eval-2-clean-diff.tar.gz to a scratch directory and cd into the extracted eval-clean-diff/ git repo before running the prompt. HEAD adds capacity validation and __len__ to an LRUCache — a genuinely clean, minimal diff with no real optimisation issues.",
+      "files": ["evals/fixtures/eval-2-clean-diff.tar.gz"],
+      "prompt": "Quick sanity check on my latest commit to cache.py (an LRUCache) — added capacity validation and a __len__ method. Anything inefficient or worth cleaning up before I push?",
+      "expected_output": "Recognizes the change is small and reasonable (O(1) additions, no redundant work, no duplication) and reports no confirmed optimisation findings rather than inventing minor/style nitpicks framed as performance issues."
+    }
+  ]
+}

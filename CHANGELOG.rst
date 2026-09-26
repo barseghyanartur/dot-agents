@@ -2,6 +2,18 @@
 Changelog
 =========
 
+0.2.1 (2026-09-27)
+==================
+
+Added
+-----
+
+- ``dot-agents-code-optimisation``: new standalone, read-only review skill
+  for performance, simplification, and reuse opportunities in pull
+  requests, branches, commits, and local diffs. Mirrors
+  ``dot-agents-code-review``'s evidence-gated finding format, scoped to
+  performance and code weight instead of correctness and security.
+
 0.2 (2026-09-22)
 ================
 
