@@ -18,6 +18,8 @@ Skills
 +--------------------------------------+--------------------------------------------------+--------------------------------------------------+-----------------------------------------+
 | dot-agents-code-review               | Review changes for evidence-backed defects.      | ``skills/dot-agents-code-review/``               |                                         |
 +--------------------------------------+--------------------------------------------------+--------------------------------------------------+-----------------------------------------+
+| dot-agents-code-optimisation         | Review changes for perf/simplification/reuse.    | ``skills/dot-agents-code-optimisation/``         |                                         |
++--------------------------------------+--------------------------------------------------+--------------------------------------------------+-----------------------------------------+
 | dot-agents-update-documentation      | Detect and fix doc/code mismatches.              | ``skills/dot-agents-update-documentation/``      |                                         |
 +--------------------------------------+--------------------------------------------------+--------------------------------------------------+-----------------------------------------+
 | dot-agents-doc-codeblock-tests       | Run Python code blocks in docs as pytest tests.  | ``skills/dot-agents-doc-codeblock-tests/``       |                                         |
