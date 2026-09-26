@@ -12,8 +12,10 @@ weight: runtime performance, redundant work, duplicate logic, dead code, and
 over-abstraction. Correctness and security are out of scope for this skill;
 defer those to `dot-agents-code-review`.
 
-Do not edit code, publish comments, approve, or request changes unless the user
-explicitly asks. Never execute untrusted code without assessing it.
+This review itself is read-only: do not edit code, publish comments, approve,
+or request changes as part of performing it. A separate, explicit user request
+can authorize an edit action outside the review; absent that request, the
+restriction stands. Never execute untrusted code without assessing it.
 
 ## 1. Establish authority and scope
 
