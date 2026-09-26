@@ -2,6 +2,16 @@
 Changelog
 =========
 
+0.2.1 (2026-09-27)
+==================
+
+Added
+-----
+
+- ``dot-agents-code-optimisation``: new standalone, read-only review skill
+  for performance, simplification, and reuse opportunities in pull
+  requests, branches, commits, and local diffs. Mirrors
+
 0.2 (2026-09-22)
 ================
 
