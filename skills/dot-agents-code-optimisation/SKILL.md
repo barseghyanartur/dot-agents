@@ -2,7 +2,7 @@
 name: dot-agents-code-optimisation
 description: Review pull requests, branches, commits, or local diffs for evidence-backed performance, simplification, and reuse opportunities.
 metadata:
-  version: "0.1"
+  version: "0.2"
 ---
 
 # Code optimisation
@@ -16,6 +16,23 @@ This review itself is read-only: do not edit code, publish comments, approve,
 or request changes as part of performing it. A separate, explicit user request
 can authorize an edit action outside the review; absent that request, the
 restriction stands. Never execute untrusted code without assessing it.
+
+## Keep explanations simple
+
+Use simple English. Keep it human and easy to understand. Avoid long
+sentences, inflated words, stock phrases, and unnecessary jargon.
+
+Put the main point first. Explain one idea at a time. Name the files,
+functions, or tools you mean.
+
+Cover every part of the request. Keep important details, limits, and
+unresolved problems. Remove repetition, not useful information.
+
+Check factual claims against the available evidence. Say what you checked
+and what you could not check. Do not present guesses as facts.
+
+Before sending, check both accuracy and clarity. Can the reader understand
+what happened, why it matters, and what to do next without guessing?
 
 ## 1. Establish authority and scope
 
@@ -109,7 +126,7 @@ A publishable finding MUST include:
   findings;
 - a falsifiable verification step or executed reproduction (e.g. a
   micro-benchmark, a query count, or a grep confirming duplicate call sites);
-- the smallest safe fix direction;
+- a clear explanation of the smallest safe fix;
 - medium or high confidence.
 
 Reject speculative micro-optimisations with no measurable or structurally
@@ -129,14 +146,45 @@ checks were not run and why.
 
 ## 5. Report findings first
 
-Order confirmed findings by severity, then confidence:
+P means priority: how urgently an issue should be addressed.
+Severity describes the impact; confidence describes how strong the evidence is.
+Keep these separate.
 
-- `P0`: severe cost (e.g. quadratic-or-worse on unbounded input, or an
-  I/O pattern that scales with load) on a hot or user-facing path.
-- `P1`: clear, measurable inefficiency or significant duplication with real
-  maintenance cost.
-- `P2`: concrete but limited-impact inefficiency or duplication.
-- `P3`: minor dead code or low-impact cleanup; do not use for style.
+Use this plain-English summary of
+[Google Issue Tracker priorities](https://developers.google.com/issue-tracker/concepts/issues#issue_priority):
+
+- `P0 — Immediate`: a full outage, or a critical function unavailable to
+  everyone, with no known workaround. Address immediately.
+- `P1 — Urgent`: serious impact on many users, a core function, or another
+  team's work. Any workaround is incomplete or painful. Address quickly.
+- `P2 — Normal`: an important problem to fix in a reasonable time. This
+  includes serious problems with a reasonable workaround, important issues
+  affecting many users, and blocked team work with no reasonable workaround.
+  This is the default priority.
+- `P3 — Low`: relevant to core work, but does not block progress or has a
+  reasonable workaround. Address when able.
+- `P4 — Lowest`: little effect on core work, or mainly about appearance
+  or pleasantness. Address eventually.
+
+Follow the repository's documented priority rules when they differ,
+including security-specific rules. State which scale you used.
+Otherwise, use only `P0`–`P4`; do not invent extra levels.
+
+For code under review, judge the expected effect if the change is deployed.
+Explain who or what is affected, the impact, and any known workaround.
+Do not assume a workaround exists. Do not raise priority because the fix
+is large or the code is complex. These labels do not replace release policy.
+
+High cost or poor scaling alone does not establish P0. Show the outage or
+critical loss of function it would cause. Duplication alone does not
+establish P1; explain how it seriously affects the work.
+
+P4 does not mean "optional suggestion". State separately whether an item
+is a defect or an optional improvement. Keep optional improvements separate
+from defects. Both still need evidence; do not report style preferences.
+
+Order findings by priority, then confidence. Do not use P2 as a fallback
+for an unverified concern; verify it or report it as an open question.
 
 Use this format for each finding:
 
@@ -145,9 +193,15 @@ Use this format for each finding:
 Location: path/to/file.ext:line
 Current cost: What the code does today and why it is expensive or redundant
 Benefit: Concrete, measurable improvement from fixing it
+Type: Defect or optional improvement
+Priority reason: Why this urgency fits; include any known workaround
 Evidence: Code and, for duplication, the other occurrence(s)
 Verification: Check performed or deterministic falsification path
-Minimal fix: Smallest safe direction
+Minimal fix:
+  Which files or functions to change, and what to change.
+  Why this helps and what behavior must stay the same.
+  A small patch or before/after example when needed.
+  Any important trade-offs or limits.
 Confidence: High or Medium
 ```
 

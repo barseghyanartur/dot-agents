@@ -2,7 +2,7 @@
 name: dot-agents-doc-codeblock-tests
 description: Validate Python code blocks in Markdown documentation using pytest-codeblock.
 metadata:
-  version: "0.2"
+  version: "0.3"
 ---
 
 # Markdown code block tests (AUTHORITATIVE)
@@ -13,6 +13,23 @@ by executing them as tests using [pytest-codeblock](https://pytest-codeblock.rea
 Broken documentation examples are treated as test failures.
 
 ---
+
+## Keep explanations simple
+
+Use simple English. Keep it human and easy to understand. Avoid long
+sentences, inflated words, stock phrases, and unnecessary jargon.
+
+Put the main point first. Explain one idea at a time. Name the files,
+functions, or tools you mean.
+
+Cover every part of the request. Keep important details, limits, and
+unresolved problems. Remove repetition, not useful information.
+
+Check factual claims against the available evidence. Say what you checked
+and what you could not check. Do not present guesses as facts.
+
+Before sending, check both accuracy and clarity. Can the reader understand
+what happened, why it matters, and what to do next without guessing?
 
 ## Scope
 
