@@ -2,7 +2,7 @@
 name: dot-agents-update-documentation
 description: Keep project documentation aligned with code by detecting and auto-fixing mismatches using agent-based analysis.
 metadata:
-  version: "0.2"
+  version: "0.3"
 ---
 
 # Update Documentation (AUTHORITATIVE)
@@ -16,6 +16,23 @@ This is a **pure agent-based process**.
 No Python scripts, generators, or external tooling are used.
 
 ---
+
+## Keep explanations simple
+
+Use simple English. Keep it human and easy to understand. Avoid long
+sentences, inflated words, stock phrases, and unnecessary jargon.
+
+Put the main point first. Explain one idea at a time. Name the files,
+functions, or tools you mean.
+
+Cover every part of the request. Keep important details, limits, and
+unresolved problems. Remove repetition, not useful information.
+
+Check factual claims against the available evidence. Say what you checked
+and what you could not check. Do not present guesses as facts.
+
+Before sending, check both accuracy and clarity. Can the reader understand
+what happened, why it matters, and what to do next without guessing?
 
 ## Scope
 
@@ -139,7 +156,7 @@ If the ground truth is unclear, the agent MUST stop and report it.
 After modifications, report:
 
 - Files changed
-- Nature of each change
+- What was wrong and what now matches the code
 - Any mismatches that could not be fixed automatically
 - Any assumptions made (if unavoidable)
 
