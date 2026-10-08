@@ -2,7 +2,7 @@
 name: dot-agents-code-optimisation
 description: Review pull requests, branches, commits, or local diffs for evidence-backed performance, simplification, and reuse opportunities.
 metadata:
-  version: "0.1"
+  version: "0.2"
 ---
 
 # Code optimisation

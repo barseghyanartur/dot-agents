@@ -2,7 +2,7 @@
 name: dot-agents-doc-codeblock-tests
 description: Validate Python code blocks in Markdown documentation using pytest-codeblock.
 metadata:
-  version: "0.2"
+  version: "0.3"
 ---
 
 # Markdown code block tests (AUTHORITATIVE)
