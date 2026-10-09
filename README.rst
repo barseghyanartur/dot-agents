@@ -13,22 +13,6 @@ development workflows, and Python project management.
    :target: https://github.com/barseghyanartur/dot-agents/tags
    :alt: Latest release
 
-.. image:: https://img.shields.io/badge/skills-9-blueviolet
-   :target: https://github.com/barseghyanartur/dot-agents/#skills
-   :alt: Number of skills
-
-.. image:: https://img.shields.io/badge/format-SKILL.md-orange
-   :target: https://agentskills.io
-   :alt: SKILL.md format
-
-.. image:: https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit
-   :target: https://github.com/pre-commit/pre-commit
-   :alt: pre-commit enabled
-
-.. image:: https://img.shields.io/badge/markdown-markdownlint-informational
-   :target: https://github.com/DavidAnson/markdownlint
-   :alt: markdownlint
-
 .. image:: https://img.shields.io/badge/license-MIT-blue.svg
    :target: https://github.com/barseghyanartur/dot-agents/#license
    :alt: MIT
