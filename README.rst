@@ -5,6 +5,22 @@ dot-agents
 A collection of SKILL.md files for AI agents — covering repository governance,
 development workflows, and Python project management.
 
+.. image:: https://img.shields.io/github/v/tag/barseghyanartur/dot-agents?label=release
+   :target: https://github.com/barseghyanartur/dot-agents/tags
+   :alt: Latest release
+
+.. image:: https://github.com/barseghyanartur/dot-agents/actions/workflows/ci.yml/badge.svg?branch=main
+   :target: https://github.com/barseghyanartur/dot-agents/actions/workflows/ci.yml
+   :alt: CI Status
+
+.. image:: https://img.shields.io/badge/license-MIT-blue.svg
+   :target: https://github.com/barseghyanartur/dot-agents/#license
+   :alt: MIT
+
+.. image:: https://img.shields.io/badge/works%20with-Claude%20Code%20%C2%B7%20OpenCode%20%C2%B7%20Codex%20%C2%B7%20Antigravity%20%C2%B7%20Kiro%20%C2%B7%20MiMo%20%C2%B7%20Copilot%20CLI-informational
+   :target: https://github.com/barseghyanartur/dot-agents/#usage
+   :alt: Compatible agents
+
 ------
 Skills
 ------
