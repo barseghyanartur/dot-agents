@@ -21,10 +21,6 @@ development workflows, and Python project management.
    :target: https://agentskills.io
    :alt: SKILL.md format
 
-.. image:: https://img.shields.io/badge/works%20with-Claude%20Code%20%C2%B7%20OpenCode%20%C2%B7%20Codex%20%C2%B7%20Antigravity%20%C2%B7%20Kiro%20%C2%B7%20MiMo%20%C2%B7%20Copilot%20CLI-informational
-   :target: https://github.com/barseghyanartur/dot-agents/#usage
-   :alt: Compatible agents
-
 .. image:: https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit
    :target: https://github.com/pre-commit/pre-commit
    :alt: pre-commit enabled
@@ -36,6 +32,10 @@ development workflows, and Python project management.
 .. image:: https://img.shields.io/badge/license-MIT-blue.svg
    :target: https://github.com/barseghyanartur/dot-agents/#license
    :alt: MIT
+
+.. image:: https://img.shields.io/badge/works%20with-Claude%20Code%20%C2%B7%20OpenCode%20%C2%B7%20Codex%20%C2%B7%20Antigravity%20%C2%B7%20Kiro%20%C2%B7%20MiMo%20%C2%B7%20Copilot%20CLI-informational
+   :target: https://github.com/barseghyanartur/dot-agents/#usage
+   :alt: Compatible agents
 
 ------
 Skills
