@@ -21,7 +21,7 @@ development workflows, and Python project management.
    :target: https://agentskills.io
    :alt: SKILL.md format
 
-.. image:: https://img.shields.io/badge/works%20with-Claude%20Code%20%C2%B7%20OpenCode%20%C2%B7%20Codex%20%C2%B7%20Antigravity%20%C2%B7%20Kiro%20%C2%B7%20MiMo-informational
+.. image:: https://img.shields.io/badge/works%20with-Claude%20Code%20%C2%B7%20OpenCode%20%C2%B7%20Codex%20%C2%B7%20Antigravity%20%C2%B7%20Kiro%20%C2%B7%20MiMo%20%C2%B7%20Copilot%20CLI-informational
    :target: https://github.com/barseghyanartur/dot-agents/#usage
    :alt: Compatible agents
 
