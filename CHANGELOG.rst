@@ -2,6 +2,33 @@
 Changelog
 =========
 
+0.3.1 (2026-10-13)
+==================
+
+Added
+-----
+
+- ``dot-agents-implement-spec``: new skill that implements a Jira issue,
+  GitHub issue, or other spec. It reads the spec and the repository first,
+  raises only red flags and unclear points that change what gets built,
+  and asks numbered, closed questions (``Q1``, ``Q2``, ...) with options and
+  a recommendation. Before coding it always presents a short plan for
+  approval, with minimal, balanced, and thorough options when a real choice
+  exists. After implementing, it runs the repository's checks, reports each
+  acceptance item as **MET**, **NOT MET**, or **UNVERIFIED**, and suggests a
+  few improvements backed by reputable, current sources. It never commits,
+  pushes, or posts comments unless asked.
+
+Changed
+-------
+
+- ``dot-agents-repo-bootstrap``: now also generates
+  ``.agents/skills/dot-agents-implement-spec/SKILL.md`` in bootstrapped
+  repositories, specified as a close mirror of the standalone
+  ``dot-agents-implement-spec`` skill, and lists it in the generated
+  ``AGENTS.md`` skills index. Like the existing files, it is skipped when it
+  already exists. ``metadata.version`` bumped to ``0.3.1``.
+
 0.3 (2026-10-08)
 ================
 

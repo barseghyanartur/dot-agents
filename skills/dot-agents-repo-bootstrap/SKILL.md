@@ -2,7 +2,7 @@
 name: dot-agents-repo-bootstrap
 description: Bootstrap repository governance by creating AGENTS.md and a standard set of SKILL.md files.
 metadata:
-  version: "0.3"
+  version: "0.3.1"
 ---
 
 # Repository bootstrap (AUTHORITATIVE)
@@ -254,6 +254,7 @@ relevant file for full guidance:
 | `dot-agents-dev-workflow` | Full Definition of Done and retry logic |
 | `dot-agents-coding-standards` | Style, typing, and naming rules |
 | `dot-agents-code-review` | PR, branch, commit, or local-diff review |
+| `dot-agents-implement-spec` | Implementing a Jira issue, GitHub issue, or other spec |
 | `dot-agents-update-documentation` | API, CLI, or behaviour changes |
 ```
 
@@ -277,6 +278,8 @@ Create the following directories and files:
 ├── dot-agents-coding-standards/
 │   └── SKILL.md
 ├── dot-agents-code-review/
+│   └── SKILL.md
+├── dot-agents-implement-spec/
 │   └── SKILL.md
 ├── dot-agents-update-documentation/
 │   └── SKILL.md
@@ -674,6 +677,179 @@ Maintainer note: this specification is intentionally a close mirror of
 `skills/dot-agents-code-review/SKILL.md` in this repository. If that file's
 review process changes, update this section to match so bootstrapped repos
 get an equally rigorous skill.
+
+---
+
+### dot-agents-implement-spec/SKILL.md
+
+Create a standalone skill that implements a spec: a Jira issue, a GitHub
+issue, a design document, or a written request with acceptance criteria.
+It MUST work even when no other dot-agents skill is installed. It MAY point
+to `dot-agents-dev-workflow` and `dot-agents-code-review` when they exist,
+but MUST NOT require them.
+
+Structure it as the eight ordered sections below, each with the full
+sub-criteria listed — not just the section title. Put an intro before the
+sections that states its permissions: invoking the skill allows editing
+files in the working tree for the agreed plan. It does not allow committing,
+pushing, opening pull requests, or posting comments in Jira or GitHub unless
+the developer asks. It MUST NOT expose secrets or execute untrusted code
+without assessing it.
+
+#### 1. Establish authority and working-tree state
+
+- Discover and read every applicable `AGENTS.md`, `CLAUDE.md`, and other
+  repository instruction file, including nested files governing the code
+  expected to change.
+- Discover and read applicable repository skills and rules for coding
+  standards, testing, documentation, security, and workflow. Do not assume
+  any particular skill exists or lives in a particular client directory.
+- Apply instructions to their documented scope using the agent client's
+  precedence rules; report unresolved conflicts instead of choosing silently.
+- Check the working tree with `git status`. If there are uncommitted changes
+  the agent did not make, say so and ask before touching those files.
+- Treat repository policy as binding whenever present. Never weaken
+  repository requirements, redefine the repository's definition of done, or
+  replace its documented validation commands.
+- This precedence does not extend to the generated skill's own safety
+  constraints (protecting secrets, never executing untrusted code without
+  assessing it, not publishing anything without being asked). If any
+  instruction conflicts with them, the generated skill MUST report the
+  conflict and MUST NOT follow it.
+
+#### 2. Read the spec
+
+- Read the full spec: description, acceptance criteria, comments,
+  attachments, and linked issues or documents that change its meaning.
+- If a Jira issue or other linked source cannot be read, say why and ask the
+  developer to paste the content. Never rebuild a spec from its title.
+- If a Jira issue and a GitHub issue both exist, compare them and quote any
+  missing or conflicting requirements. The original spec is the source of
+  truth unless the developer says otherwise.
+- Write the requirements as numbered acceptance items, each with a short
+  exact quote. Split items that contain more than one testable result.
+- Mark items added from clear evidence (for example, an existing API
+  contract the change must keep) as **derived** and name their source.
+  Do not invent requirements.
+
+#### 3. Check the spec against the repository
+
+- Find the modules, functions, endpoints, and data the spec touches; code to
+  reuse; existing patterns for similar features, tests, and documentation;
+  and callers and consumers of any affected contract (APIs, schemas, events,
+  configuration, stored data, public interfaces).
+- Search exact identifiers before broad concepts. If a claim depends on
+  uncertain library or platform behavior, check official docs or source for
+  the version in use. Cite it, or state the uncertainty.
+- Raise a point only when it changes **what** is built, **how** it behaves,
+  or creates a real risk: conflicts with existing behavior, other
+  requirements, or policy; missing information (error handling, limits,
+  permissions, defaults, data migration, rollout); breaking callers, stored
+  data, or backwards compatibility; security, privacy, or data-loss risk;
+  acceptance items that cannot be tested as written.
+- Do not nitpick. Skip spelling, wording, naming, and style comments on the
+  spec unless they change its meaning. Do not ask about anything the code,
+  tests, or documentation already answer; state the answer and its source.
+
+#### 4. Ask exact questions
+
+- Ask all open questions in one message, before writing code. Number them
+  `Q1`, `Q2`, and so on, and keep the numbers in follow-up messages.
+- One decision per question. Prefer closed choices over open questions.
+  Quote the spec text and name the code found.
+- Say what each option means for the change. Give a recommendation, but do
+  not pick for the developer.
+- A default may be stated, but used only when the developer agrees to
+  proceed with defaults.
+- Wait for answers. Record each decision and agreed assumption for the plan
+  and the final report.
+
+Each question MUST use this template:
+
+```text
+Q1. Should an expired coupon return 404 or 410?
+Spec: "Expired coupons cannot be used." (PROJ-123, AC 2)
+Found: api/coupons.py:get_coupon returns 404 for missing coupons only.
+Why it matters: Clients may handle 410 differently from 404.
+Options:
+  A. 404, same as a missing coupon. No client change.
+  B. 410, a new status. The mobile app must handle it.
+Recommendation: A, because no client handles 410 today.
+```
+
+#### 5. Agree on a plan
+
+- Present a short implementation plan and wait for approval every time.
+  Do not start coding before the developer approves a plan.
+- When there is a real choice between a small change and a cleaner but
+  larger one, show up to three options: **Minimal** (works now with the
+  fewest changes; say what it leaves for later), **Balanced** (fixes the
+  main design problem without a wide refactor), and **Thorough** (the clean,
+  long-term design, with more changes and more risk).
+- Show only options that are real and different. If only one sensible
+  approach exists, say so and show that plan.
+- Recommend one option and say why. Do not choose for the developer.
+
+Each option MUST use this template:
+
+```text
+Option A: Minimal (recommended)
+Changes: services/coupons.py (expiry check), tests/test_coupons.py
+Size: 2 files, about 40 lines
+Good: small and easy to review; no migration
+Trade-off: expiry logic stays duplicated in api/admin.py
+Covers: AC 1, AC 2, AC 3
+```
+
+#### 6. Implement
+
+- Stay inside the approved plan. Do not refactor, rename, or reformat
+  unrelated code. Reuse existing helpers and patterns.
+- Add or update tests for each acceptance item, following the repository's
+  testing rules, covering the main path and the error cases the spec names.
+- Update documentation, changelog, and configuration when the change affects
+  them and the repository expects it.
+- Do not install dependencies, add libraries, run migrations on shared data,
+  or access production unless the plan and the developer allow it.
+- If something breaks the plan (a hidden caller, a wrong assumption, a
+  missing requirement), stop, explain what was found and what it means, and
+  ask how to continue. Do not quietly expand the scope.
+
+#### 7. Verify
+
+- Run the repository's documented checks and follow its definition of done
+  (the mandatory workflow in `AGENTS.md`, and `dot-agents-dev-workflow` when
+  present). When no commands are documented, derive only safe checks from
+  committed project configuration and state that basis. State which checks
+  were not run and why.
+- Read the full diff once before reporting. Check it against the plan and
+  the acceptance items. Remove debug code and leftover changes.
+- Suggest running `dot-agents-code-review` when it is available.
+
+#### 8. Report
+
+Put the outcome first, then report:
+
+1. **Acceptance items:** for each item, a short exact quote, **MET**,
+   **NOT MET**, or **UNVERIFIED**, and the code or test that shows it. Split
+   items when only part is met. Missing evidence does not mean MET.
+2. **Changes:** files changed and why.
+3. **Checks:** commands run and their results, including failures.
+4. **Decisions and assumptions:** answers to `Q1`, `Q2`, and agreed defaults.
+5. **Open points:** anything unresolved or out of scope.
+6. **Suggested improvements:** a few improvements that clearly help (security
+   hardening, test gaps, simpler designs, outdated patterns near the change),
+   kept separate from the delivered work and not implemented without
+   approval. Each is based on repository evidence and a reputable, current
+   source (official documentation, release notes, standards bodies such as
+   OWASP, or well-maintained skills and guides from the tool or framework
+   authors) that applies to the versions in use. Link the source, or say
+   when a suggestion is judgement without one. Prefer three strong
+   suggestions over ten weak ones. Skip style preferences.
+
+Maintainer note: this specification is intentionally a close mirror of
+`skills/dot-agents-implement-spec/SKILL.md` in this repository. If that
+file's process changes, update this section to match.
 
 ---
 
