@@ -38,6 +38,8 @@ Skills
 +--------------------------------------+--------------------------------------------------+--------------------------------------------------+-----------------------------------------+
 | dot-agents-reproduce-and-verify-fix  | Reproduce a review finding and verify a fix.     | ``skills/dot-agents-reproduce-and-verify-fix/``  |                                         |
 +--------------------------------------+--------------------------------------------------+--------------------------------------------------+-----------------------------------------+
+| dot-agents-implement-spec            | Implement a spec after agreeing questions/plan.  | ``skills/dot-agents-implement-spec/``            |                                         |
++--------------------------------------+--------------------------------------------------+--------------------------------------------------+-----------------------------------------+
 | dot-agents-update-documentation      | Detect and fix doc/code mismatches.              | ``skills/dot-agents-update-documentation/``      |                                         |
 +--------------------------------------+--------------------------------------------------+--------------------------------------------------+-----------------------------------------+
 | dot-agents-doc-codeblock-tests       | Run Python code blocks in docs as pytest tests.  | ``skills/dot-agents-doc-codeblock-tests/``       |                                         |
