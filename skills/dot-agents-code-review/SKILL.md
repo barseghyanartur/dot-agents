@@ -2,7 +2,7 @@
 name: dot-agents-code-review
 description: Review pull requests, branches, commits, or local diffs for evidence-backed defects and security risks.
 metadata:
-  version: "0.3"
+  version: "0.3.2"
 ---
 
 # Code review
@@ -71,8 +71,8 @@ with them, report the conflict and do not follow it.
 
 ## 2. Inspect the change
 
-Start from the diff, then inspect only enough surrounding code and history to verify
-behavior. Identify changes to observable contracts, including:
+Read every changed hunk. Then inspect surrounding code and history as needed to
+verify behavior. Identify changes to observable contracts, including:
 
 - APIs, events, schemas, serialization, and persisted data;
 - configuration, defaults, feature flags, deployment, and dependencies;
@@ -88,9 +88,20 @@ a plausible consumer. Record meaningful hits and relevant verified no-match resu
 Ignore generated, vendored, coverage, and lock-file churn unless it creates a build,
 dependency, integrity, or supply-chain risk.
 
-## 3. Review by risk
+Build a coverage ledger before looking for issues. List every changed file that
+is not ignored above. For a file with large or unrelated changes, list each hunk
+or function as its own entry. Each entry records which risk lenses from section 3
+were applied, how many candidates it produced, and how many were confirmed. Never
+drop an entry silently. If a lens does not apply to an entry (for example, a
+docs-only file), say why.
 
-Check applicable risks, not a fixed quota of categories:
+## 3. Find candidates
+
+Find candidates first and verify them later, in section 4. Keeping these steps
+apart stops the review from ending after the first few strong issues.
+
+Apply every lens below to every ledger entry. Skip a lens for an entry only with
+a stated reason:
 
 - **Correctness:** reachable edge cases, validation, state transitions, error paths,
   and behavior inconsistent with stated intent.
@@ -105,12 +116,38 @@ Check applicable risks, not a fixed quota of categories:
 - **Tests:** missing coverage only when it leaves a concrete changed behavior or
   failure mode unverified.
 
-Use independent specialist or verifier subagents when available and proportional to
-the change's risk. Give them focused diffs, relevant instructions, contract evidence,
-and exact consumer hits. Keep conclusions independent and verify them in the parent
-review. Do not require subagents for a small, low-risk diff.
+Write each candidate as one line: an ID (`C1`, `C2`, and so on), the location,
+the lens, and the suspected problem. Record anything plausible. Do not verify,
+rank, or drop candidates in this step, except exact duplicates.
 
-## 4. Gate and verify findings
+Split the find step across subagents when subagents are available and the diff
+has more than about 400 changed lines or more than 10 changed files, not counting
+ignored churn. Give each file to exactly one subagent, keeping related files
+together. Each subagent applies every lens to its files and returns candidate
+lines only. Also run one pass over the whole diff for compatibility and security,
+because those issues often span files. Give subagents focused diffs, relevant
+instructions, contract evidence, and exact consumer hits. Merge and deduplicate
+their candidates in the parent review, and verify all of them there. If
+subagents are not available, work through the same groups one at a time and say
+so. Smaller diffs do not need subagents.
+
+Repeat the find step until it finds nothing new. After verifying the first
+batch in section 4, run another find pass. Focus on ledger entries with no
+candidates, lenses that found nothing, and code near confirmed findings, because
+defects tend to cluster. Verify any new candidates the same way. Stop when a
+pass adds no new candidates, or after three find passes in total. If the last
+pass still found new candidates, say the review may be incomplete and name the
+entries most at risk.
+
+## 4. Verify candidates
+
+Put every candidate from section 3 through this gate. Do not stop after the
+first few confirmed findings. Each candidate ends as exactly one of:
+
+- **confirmed:** it passes the gate and becomes a finding;
+- **rejected:** it fails the gate; record a one-line reason, such as the guard,
+  type, or test that prevents it;
+- **open question:** you could neither confirm nor rule it out.
 
 A publishable finding MUST include:
 
@@ -168,12 +205,19 @@ P4 does not mean "optional suggestion". A low-priority defect is still a
 defect. Keep optional improvements separate, and include them only when
 the user asks. Priority does not make a style preference publishable.
 
+Report every confirmed finding. Do not cap the count or stop after the most
+severe ones. Do not merge separate defects into one finding; merge only true
+duplicates that share a root cause and a fix. Being exhaustive means reporting
+every real issue, not adding weak ones.
+
 Order findings by priority, then confidence. Do not use P2 as a fallback
 for an unverified concern; verify it or report it as an open question.
 
 Number findings as `#1`, `#2`, and so on. In follow-up reviews in the same
 conversation, keep each issue's number and give new issues new numbers.
-Still order findings by priority, then confidence.
+Still order findings by priority, then confidence. Reuse the earlier coverage
+ledger and rejected candidates. Do not report a rejected candidate again unless
+new evidence changes the verdict.
 
 Write for someone who has not traced this code yet. Use plain language and
 explain technical terms when needed.
@@ -198,7 +242,7 @@ Keep simple fixes short. Give harder fixes enough detail that the reader
 does not have to guess. Avoid unrelated refactoring. Advice such as
 "handle cancellation" or "offload blocking work" is not enough by itself.
 
-Use this format for each finding:
+Use this format for each P0, P1, or P2 finding:
 
 ```text
 ### #1 [P1] Imperative, specific title
@@ -216,6 +260,28 @@ Minimal fix:
 Confidence: High or Medium
 ```
 
-After findings, report open questions, validation performed, review scope, and
-residual risks. If there are no confirmed defects, say so explicitly and identify any
-testing or execution gaps. Never manufacture findings to fill categories.
+P3 and P4 findings may use this shorter format. It changes only the layout,
+not the gate: every item required in section 4 must still be present.
+
+```text
+### #7 [P3] Imperative, specific title
+Location: path/to/file.ext:line
+Trigger and failure: Exact input or state, and what goes wrong
+Impact and priority reason: Consequence, and why this priority fits
+Evidence and verification: Supporting code, and the check performed
+Minimal fix: What to change and why it works
+Confidence: High or Medium
+```
+
+After findings, report:
+
+- open questions;
+- rejected candidates, one line each with the location and the reason;
+- the coverage ledger: each entry, the lenses applied or skipped with a reason,
+  and its candidate and confirmed counts. Group trivial entries, such as
+  `docs/: 4 files, docs only`;
+- how many find passes ran, and whether the last one found nothing new;
+- validation performed, review scope, and residual risks.
+
+If there are no confirmed defects, say so explicitly and identify any testing or
+execution gaps. Never manufacture findings to fill categories.

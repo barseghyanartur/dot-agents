@@ -2,7 +2,7 @@
 name: dot-agents-repo-bootstrap
 description: Bootstrap repository governance by creating AGENTS.md and a standard set of SKILL.md files.
 metadata:
-  version: "0.3.1"
+  version: "0.3.2"
 ---
 
 # Repository bootstrap (AUTHORITATIVE)
@@ -520,8 +520,8 @@ official docs or source for the version in use. Cite it, or state the uncertaint
 
 #### 2. Inspect the change
 
-- Start from the diff; inspect only enough surrounding code and history to
-  verify behavior.
+- Read every changed hunk; then inspect surrounding code and history as
+  needed to verify behavior.
 - Identify changes to observable contracts: APIs, events, schemas,
   serialization, and persisted data; configuration, defaults, feature flags,
   deployment, and dependencies; authentication, authorization, ownership,
@@ -535,10 +535,17 @@ official docs or source for the version in use. Cite it, or state the uncertaint
   meaningful hits and relevant verified no-match results.
 - Ignore generated, vendored, coverage, and lock-file churn unless it creates
   a build, dependency, integrity, or supply-chain risk.
+- Build a coverage ledger before looking for issues: every changed file not
+  ignored above, with large or unrelated changes split into one entry per
+  hunk or function. Each entry records the lenses from section 3 that were
+  applied, its candidate count, and its confirmed count. Never drop an entry
+  silently; when a lens does not apply, say why.
 
-#### 3. Review by risk
+#### 3. Find candidates
 
-Check applicable risks, not a fixed quota of categories:
+Find candidates first and verify them later, in section 4, so the review
+does not end after the first few strong issues. Apply every lens below to
+every ledger entry; skip a lens for an entry only with a stated reason:
 
 - **Correctness** — reachable edge cases, validation, state transitions,
   error paths, and behavior inconsistent with stated intent.
@@ -554,13 +561,33 @@ Check applicable risks, not a fixed quota of categories:
 - **Tests** — missing coverage only when it leaves a concrete changed
   behavior or failure mode unverified.
 
-Use independent specialist or verifier subagents when available and
-proportional to the change's risk; give them focused diffs, relevant
-instructions, contract evidence, and exact consumer hits, but keep
-conclusions independent and verify them in the parent review. Do not require
-subagents for a small, low-risk diff.
+Write each candidate as one line: an ID (`C1`, `C2`, ...), the location, the
+lens, and the suspected problem. Record anything plausible; do not verify,
+rank, or drop candidates in this step, except exact duplicates.
 
-#### 4. Gate and verify findings
+When subagents are available and the diff has more than about 400 changed
+lines or more than 10 changed files (not counting ignored churn), split the
+find step: give each file to exactly one subagent, keeping related files
+together; each applies every lens to its files and returns candidate lines
+only. Also run one whole-diff pass for compatibility and security. Give
+subagents focused diffs, relevant instructions, contract evidence, and exact
+consumer hits. Merge and deduplicate in the parent review and verify every
+candidate there. Without subagents, work through the same groups one at a
+time and say so. Smaller diffs do not need subagents.
+
+Repeat the find step until it finds nothing new: after verifying the first
+batch, run another pass focused on entries with no candidates, lenses that
+found nothing, and code near confirmed findings. Stop when a pass adds no new
+candidates, or after three find passes in total. If the last pass still found
+new candidates, say the review may be incomplete and name the entries most
+at risk.
+
+#### 4. Verify candidates
+
+Put every candidate from section 3 through this gate; do not stop after the
+first few confirmed findings. Each candidate ends as exactly one of:
+**confirmed** (becomes a finding), **rejected** (with a one-line reason such
+as the guard, type, or test that prevents it), or **open question**.
 
 A publishable finding MUST include: the changed file and line; a reachable
 trigger or state; the resulting failure and concrete impact; supporting code
@@ -616,12 +643,19 @@ P4 does not mean "optional suggestion". A low-priority defect is still a
 defect. Keep optional improvements separate, and include them only when
 the user asks. Priority does not make a style preference publishable.
 
+Report every confirmed finding. Do not cap the count or stop after the most
+severe ones. Do not merge separate defects into one finding; merge only true
+duplicates that share a root cause and a fix. Being exhaustive means reporting
+every real issue, not adding weak ones.
+
 Order findings by priority, then confidence. Do not use P2 as a fallback
 for an unverified concern; verify it or report it as an open question.
 
 Number findings as `#1`, `#2`, and so on. In follow-up reviews in the same
 conversation, keep each issue's number and give new issues new numbers.
-Still order findings by priority, then confidence.
+Still order findings by priority, then confidence. Reuse the earlier coverage
+ledger and rejected candidates. Do not report a rejected candidate again unless
+new evidence changes the verdict.
 
 Write for someone who has not traced this code yet. Use plain language and
 explain technical terms when needed.
@@ -646,7 +680,7 @@ Keep simple fixes short. Give harder fixes enough detail that the reader
 does not have to guess. Avoid unrelated refactoring. Advice such as
 "handle cancellation" or "offload blocking work" is not enough by itself.
 
-Each finding MUST use this exact template:
+Each P0, P1, or P2 finding MUST use this exact template:
 
 ```text
 ### #1 [P1] Imperative, specific title
@@ -664,10 +698,26 @@ Minimal fix:
 Confidence: High or Medium
 ```
 
-After findings, report open questions, validation performed, review scope,
-and residual risks. If there are no confirmed defects, say so explicitly and
-identify any testing or execution gaps. Never manufacture findings to fill
-categories.
+P3 and P4 findings MAY use this shorter template. It changes only the layout,
+not the gate: every item required in section 4 must still be present.
+
+```text
+### #7 [P3] Imperative, specific title
+Location: path/to/file.ext:line
+Trigger and failure: Exact input or state, and what goes wrong
+Impact and priority reason: Consequence, and why this priority fits
+Evidence and verification: Supporting code, and the check performed
+Minimal fix: What to change and why it works
+Confidence: High or Medium
+```
+
+After findings, report: open questions; rejected candidates, one line each
+with the location and the reason; the coverage ledger (each entry, the lenses
+applied or skipped with a reason, and its candidate and confirmed counts,
+with trivial entries grouped); how many find passes ran and whether the last
+one found nothing new; validation performed, review scope, and residual
+risks. If there are no confirmed defects, say so explicitly and identify any
+testing or execution gaps. Never manufacture findings to fill categories.
 
 The generated skill MUST NOT edit code, publish review comments, approve, or
 request changes unless the user explicitly asks. It MUST NOT expose secrets
