@@ -31,6 +31,15 @@ Changed
   - The report now also lists rejected candidates, the coverage ledger, and
     the number of find passes.
 
+- ``dot-agents-code-review`` (and its ``dot-agents-repo-bootstrap``
+  specification): for PRs, existing review and conversation comments are
+  read, including resolved and outdated threads. A confirmed finding that an
+  existing comment already flags is kept and marked ``[DUPLICATE]`` (or
+  ``[PARTIAL DUPLICATE]``), with a ``Duplicate of`` line linking the comment.
+  Whether the problem still exists is judged from the code at the PR head,
+  never from thread status or replies. The "reject duplicates" rule now
+  covers only this review's own candidates.
+
 - ``metadata.version`` bumped: ``dot-agents-code-review`` to ``0.3.2``,
   ``dot-agents-code-optimisation`` to ``0.3``, ``dot-agents-repo-bootstrap``
   to ``0.3.2``.
