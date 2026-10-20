@@ -2,6 +2,25 @@
 Changelog
 =========
 
+0.3.3 (2026-10-21)
+==================
+
+Added
+-----
+
+- ``docs/vscode.rst``: short guide to install the skills in VS Code,
+  including sandboxes, dev containers, and Codespaces. Nothing is added to
+  your project.
+- ``plugin.json``: lets VS Code install this repository as an agent plugin
+  with ``/plugin install https://github.com/barseghyanartur/dot-agents``.
+- ``scripts/install.sh``: one-line installer that copies the skills to
+  ``~/.agents/skills/``. Run it again to update.
+
+Changed
+-------
+
+- ``README.rst``: skill names in the table now link to their ``SKILL.md``.
+
 0.3.2 (2026-10-19)
 ==================
 

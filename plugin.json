@@ -1,0 +1,6 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "dot-agents",
+  "version": "0.3.3",
+  "description": "SKILL.md files for repository governance, development workflows, and Python project management."
+}
