@@ -21,35 +21,46 @@ development workflows, and Python project management.
    :target: https://github.com/barseghyanartur/dot-agents/#usage
    :alt: Compatible agents
 
+.. _dot-agents-repo-bootstrap: skills/dot-agents-repo-bootstrap/SKILL.md
+.. _dot-agents-skill-authoring: skills/dot-agents-skill-authoring/SKILL.md
+.. _dot-agents-code-review: skills/dot-agents-code-review/SKILL.md
+.. _dot-agents-code-optimisation: skills/dot-agents-code-optimisation/SKILL.md
+.. _dot-agents-reproduce-and-verify-fix: skills/dot-agents-reproduce-and-verify-fix/SKILL.md
+.. _dot-agents-implement-spec: skills/dot-agents-implement-spec/SKILL.md
+.. _dot-agents-update-documentation: skills/dot-agents-update-documentation/SKILL.md
+.. _dot-agents-doc-codeblock-tests: skills/dot-agents-doc-codeblock-tests/SKILL.md
+.. _dot-agents-migrate-to-uv: skills/dot-agents-migrate-to-uv/SKILL.md
+.. _dot-agents-migrate-from-mypy-to-ty: skills/dot-agents-migrate-from-mypy-to-ty/SKILL.md
+
 ------
 Skills
 ------
 
-+--------------------------------------+--------------------------------------------------+--------------------------------------------------+-----------------------------------------+
-| Skill                                | Description                                      | Location                                         | Assets (relative to Location + assets)  |
-+======================================+==================================================+==================================================+=========================================+
-| dot-agents-repo-bootstrap            | Create AGENTS.md and standard SKILL.md files.    | ``skills/dot-agents-repo-bootstrap/``            |                                         |
-+--------------------------------------+--------------------------------------------------+--------------------------------------------------+-----------------------------------------+
-| dot-agents-skill-authoring           | Add or modify SKILL.md files per AGENTS.md.      | ``skills/dot-agents-skill-authoring/``           |                                         |
-+--------------------------------------+--------------------------------------------------+--------------------------------------------------+-----------------------------------------+
-| dot-agents-code-review               | Review changes for evidence-backed defects.      | ``skills/dot-agents-code-review/``               |                                         |
-+--------------------------------------+--------------------------------------------------+--------------------------------------------------+-----------------------------------------+
-| dot-agents-code-optimisation         | Review changes for perf/simplification/reuse.    | ``skills/dot-agents-code-optimisation/``         |                                         |
-+--------------------------------------+--------------------------------------------------+--------------------------------------------------+-----------------------------------------+
-| dot-agents-reproduce-and-verify-fix  | Reproduce a review finding and verify a fix.     | ``skills/dot-agents-reproduce-and-verify-fix/``  |                                         |
-+--------------------------------------+--------------------------------------------------+--------------------------------------------------+-----------------------------------------+
-| dot-agents-implement-spec            | Implement a spec after agreeing questions/plan.  | ``skills/dot-agents-implement-spec/``            |                                         |
-+--------------------------------------+--------------------------------------------------+--------------------------------------------------+-----------------------------------------+
-| dot-agents-update-documentation      | Detect and fix doc/code mismatches.              | ``skills/dot-agents-update-documentation/``      |                                         |
-+--------------------------------------+--------------------------------------------------+--------------------------------------------------+-----------------------------------------+
-| dot-agents-doc-codeblock-tests       | Run Python code blocks in docs as pytest tests.  | ``skills/dot-agents-doc-codeblock-tests/``       |                                         |
-+--------------------------------------+--------------------------------------------------+--------------------------------------------------+-----------------------------------------+
-| dot-agents-migrate-to-uv             | Migrate to uv from virtualenv, pip-tools, etc.   | ``skills/dot-agents-migrate-to-uv/``             | ``pyproject.toml.tmpl``                 |
-|                                      |                                                  |                                                  | ``Makefile.tmpl``                       |
-|                                      |                                                  |                                                  | ``pre-commit-config.yaml.tmpl``         |
-+--------------------------------------+--------------------------------------------------+--------------------------------------------------+-----------------------------------------+
-| dot-agents-migrate-from-mypy-to-ty   | Switch from mypy to ty for type checking.        | ``skills/dot-agents-migrate-from-mypy-to-ty/``   |                                         |
-+--------------------------------------+--------------------------------------------------+--------------------------------------------------+-----------------------------------------+
++----------------------------------------+--------------------------------------------------+--------------------------------------------------+-----------------------------------------+
+| Skill                                  | Description                                      | Location                                         | Assets (relative to Location + assets)  |
++========================================+==================================================+==================================================+=========================================+
+| `dot-agents-repo-bootstrap`_           | Create AGENTS.md and standard SKILL.md files.    | ``skills/dot-agents-repo-bootstrap/``            |                                         |
++----------------------------------------+--------------------------------------------------+--------------------------------------------------+-----------------------------------------+
+| `dot-agents-skill-authoring`_          | Add or modify SKILL.md files per AGENTS.md.      | ``skills/dot-agents-skill-authoring/``           |                                         |
++----------------------------------------+--------------------------------------------------+--------------------------------------------------+-----------------------------------------+
+| `dot-agents-code-review`_              | Review changes for evidence-backed defects.      | ``skills/dot-agents-code-review/``               |                                         |
++----------------------------------------+--------------------------------------------------+--------------------------------------------------+-----------------------------------------+
+| `dot-agents-code-optimisation`_        | Review changes for perf/simplification/reuse.    | ``skills/dot-agents-code-optimisation/``         |                                         |
++----------------------------------------+--------------------------------------------------+--------------------------------------------------+-----------------------------------------+
+| `dot-agents-reproduce-and-verify-fix`_ | Reproduce a review finding and verify a fix.     | ``skills/dot-agents-reproduce-and-verify-fix/``  |                                         |
++----------------------------------------+--------------------------------------------------+--------------------------------------------------+-----------------------------------------+
+| `dot-agents-implement-spec`_           | Implement a spec after agreeing questions/plan.  | ``skills/dot-agents-implement-spec/``            |                                         |
++----------------------------------------+--------------------------------------------------+--------------------------------------------------+-----------------------------------------+
+| `dot-agents-update-documentation`_     | Detect and fix doc/code mismatches.              | ``skills/dot-agents-update-documentation/``      |                                         |
++----------------------------------------+--------------------------------------------------+--------------------------------------------------+-----------------------------------------+
+| `dot-agents-doc-codeblock-tests`_      | Run Python code blocks in docs as pytest tests.  | ``skills/dot-agents-doc-codeblock-tests/``       |                                         |
++----------------------------------------+--------------------------------------------------+--------------------------------------------------+-----------------------------------------+
+| `dot-agents-migrate-to-uv`_            | Migrate to uv from virtualenv, pip-tools, etc.   | ``skills/dot-agents-migrate-to-uv/``             | ``pyproject.toml.tmpl``                 |
+|                                        |                                                  |                                                  | ``Makefile.tmpl``                       |
+|                                        |                                                  |                                                  | ``pre-commit-config.yaml.tmpl``         |
++----------------------------------------+--------------------------------------------------+--------------------------------------------------+-----------------------------------------+
+| `dot-agents-migrate-from-mypy-to-ty`_  | Switch from mypy to ty for type checking.        | ``skills/dot-agents-migrate-from-mypy-to-ty/``   |                                         |
++----------------------------------------+--------------------------------------------------+--------------------------------------------------+-----------------------------------------+
 
 -----
 Usage
