@@ -10,15 +10,23 @@ DEST="${DEST:-$HOME/.agents/skills}"
 tmp="$(mktemp -d)"
 trap 'rm -rf "$tmp"' EXIT
 
-curl -fsSL "https://codeload.github.com/$REPO/tar.gz/$REF" | tar -xz -C "$tmp"
+curl -fsSL -o "$tmp/archive.tar.gz" "https://codeload.github.com/$REPO/tar.gz/$REF"
+tar -xzf "$tmp/archive.tar.gz" -C "$tmp"
 
 mkdir -p "$DEST"
+count=0
 for skill in "$tmp"/*/skills/dot-agents-*/; do
     [ -f "$skill/SKILL.md" ] || continue
     name="$(basename "$skill")"
     rm -rf "${DEST:?}/$name"
     cp -R "$skill" "$DEST/$name"
     echo "Installed $name"
+    count=$((count + 1))
 done
+
+if [ "$count" -eq 0 ]; then
+    echo "Error: no skills found in $REPO@$REF" >&2
+    exit 1
+fi
 
 echo "Done. Skills are in $DEST"
